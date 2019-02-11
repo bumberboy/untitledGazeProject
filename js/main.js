@@ -214,6 +214,33 @@ function addExample(image, metaInfo, target) {
     addToDataset(image, metaInfo, target, key);
 }
 
+// getMetaInfos: function(mirror) {
+//     // Get some meta info about the rectangle as a tensor:
+//     // - middle x, y of the eye rectangle, relative to video size
+//     // - size of eye rectangle, relative to video size
+//     // - angle of rectangle (TODO)
+//     console.log(facetracker.currentEyeRect)
+//     let x = facetracker.currentEyeRect[0] + facetracker.currentEyeRect[2] / 2;
+//     let y = facetracker.currentEyeRect[1] + facetracker.currentEyeRect[3] / 2;
+//
+//     x = (x / facetracker.videoWidthExternal) * 2 - 1;
+//     y = (y / facetracker.videoHeightExternal) * 2 - 1;
+//
+//     const rectWidth =
+//         facetracker.currentEyeRect[2] / facetracker.videoWidthExternal;
+//     const rectHeight =
+//         facetracker.currentEyeRect[3] / facetracker.videoHeightExternal;
+//     console.log(facetracker.videoWidthExternal)
+//     console.log(facetracker.videoHeightExternal)
+//     if (mirror) {
+//         x = 1 - x;
+//         y = 1 - y;
+//     }
+//     return tf.tidy(function() {
+//         return tf.tensor1d([x, y, rectWidth, rectHeight]).expandDims(0);
+//     });
+// },
+
 function getMetaInfo() {
     // Get some meta info about the rectangle as a tensor:
     // - middle x, y of the eye rectangle, relative to video size TODO
