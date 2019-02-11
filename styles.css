@@ -1,0 +1,134 @@
+.page-container {
+    left: 0;
+    right: 0;
+    margin: auto;
+    margin-top: 20px;
+    padding-left: 280px;
+    display: inline-flex !important;
+}
+
+@media only screen and (max-width : 992px) {
+    .page-container {
+        padding-left: 0;
+        display: flex !important;
+    }
+}
+
+#navbar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+#target {
+    background-color: lightgreen;
+    position: absolute;
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    transition: all 0.1s ease;
+    box-shadow: 0 0 20px 10px white;
+    border: 4px solid rgba(0,0,0,0.5);
+}
+
+#train {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24pt;
+}
+
+
+.side-by-side {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.side-by-side >* {
+    margin: 0 5px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.margin-sm {
+    margin: 5px;
+}
+
+.margin {
+    margin: 20px;
+}
+
+.button-sm {
+    padding: 0 10px !important;
+}
+
+.pad-sides-sm {
+    padding: 0 8px !important;
+}
+
+#github-link {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid;
+    margin-bottom: 10px;
+}
+
+#overlay, .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#eyes, #eyesRotated {
+    background-color: crimson;
+}
+
+#facesContainer canvas {
+    margin: 10px;
+}
+
+#training {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 400px;
+    background-color: lightblue;
+    padding: 0.5em;
+}
+
+#training table {
+    width: 100%;
+    font-size: 16pt;
+    font-family: 'Source Code Pro', monospace;
+}
+
+#training table td:nth-child(2) {
+    text-align: right;
+}
+
+.buttonwrap {
+    text-align: center;
+}
+
+button {
+    position: relative;
+    z-index: 11;
+    cursor: pointer;
+    font-size: 10pt;
+    padding: 0.125em 0em;
+    margin: 0.1em;
+    width: 140px;
+    font-family: 'Source Code Pro', monospace;
+}
