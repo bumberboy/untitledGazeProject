@@ -26,7 +26,6 @@ async function onPlay() {
 
     if (result) {
         if ('landmarks' in result) {
-            // eyesRect = getEyesRect(result.landmarks);
             rotationAngle = getEyeRotation(result.landmarks);
             // displayEyesRotated(rotationAngle,eyesRect);
 
@@ -55,7 +54,7 @@ function angleBetweenTwoPoints(p1,p2) {
 }
 
 
-function getRotationAngle(landmarks) {
+function getFaceRotationAngle(landmarks) {
     var jawOutline = landmarks.getJawOutline();
     var p1=jawOutline[0];
     var p2=jawOutline[16];
@@ -69,27 +68,6 @@ function getEyeRotation(landmarks) {
     return  angleBetweenTwoPoints(leftEye[0],leftEye[3]);
 }
 
-// function getEyesRect(landmarks) {
-//     var leftEye = landmarks.getLeftEye();
-//     var rightEye = landmarks.getRightEye();
-//
-//     const minX = Math.min(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x) - 10;
-//     const maxX = Math.max(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x) + 10;
-//     const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) - 3;
-//     const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) + 3;
-//     // const minX = Math.min(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x,
-//     //     rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) - 5;
-//     // const maxX = Math.max(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x,
-//     //     rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) + 5;
-//     // const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y,
-//     //     rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) - 5;
-//     // const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y,
-//     //     rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) + 5;
-//     const width = maxX - minX;
-//     const height = maxY - minY;
-//     return [minX, minY, width, height * 1.25];
-//
-// }
 
 function getLeftEyeRect(landmarks) {
     var leftEye = landmarks.getLeftEye();
@@ -150,8 +128,10 @@ function getImage() {
 
 function addToDataset(image, metaInfo, target, key) {
     const set = dataset[key];
+    console.log(set)
+    console.log(dataset.inputWidth, dataset.inputHeight);
     if (set.x == null) {
-        set.x = [tf.keep(image), tf.keep(metaInfos)];
+        set.x = [tf.keep(image), tf.keep(metaInfo)];
         set.y = tf.keep(target);
     } else {
         const oldImage = set.x[0];
@@ -161,7 +141,7 @@ function addToDataset(image, metaInfo, target, key) {
         set.x[0] = tf.keep(oldImage.concat(image, 0));
 
         const oldEyePos = set.x[1];
-        set.x[1] = tf.keep(oldEyePos.concat(metaInfos, 0));
+        set.x[1] = tf.keep(oldEyePos.concat(metaInfo, 0));
 
         const oldY = set.y;
         set.y = tf.keep(oldY.concat(target, 0));
@@ -210,7 +190,7 @@ function addExample(image, metaInfo, target) {
     const key = Math.random() > 0.2 ? 'train' : 'val';
 
     image = convertImage(image);
-
+    console.log(image, metaInfo, target, key);
     addToDataset(image, metaInfo, target, key);
 }
 
@@ -247,8 +227,9 @@ function getMetaInfo() {
     // - size of eye rectangle, relative to video size TODO
     // - angle of rectangle (TODO)
 
+    const faceAngle = getFaceRotationAngle(currentLandmarks);
     return tf.tidy(function() {
-        return tf.tensor1d([x, y, rectWidth, rectHeight]).expandDims(0);
+        return tf.tensor1d([faceAngle]).expandDims(0);
     });
 }
 function captureExample() {
@@ -310,7 +291,8 @@ function moveTarget() {
     }
     tf.tidy(function() {
         const image = getImage();
-        const prediction = currentModel.predict(image);
+        const metaInfo = getMetaInfo();
+        const prediction = currentModel.predict([image, metaInfo]);
 
         // Convert normalized position back to screen position:
         const target = $('#target');
@@ -330,11 +312,5 @@ $(document).ready(function() {
     run();
     setupKeys();
     setInterval(moveTarget, 100);
-
-    const ctx = $("#overlay").getContext('2d')
-    ctx.scale(-1,1)
-
-
-
 
 });

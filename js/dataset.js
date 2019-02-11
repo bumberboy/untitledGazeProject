@@ -1,6 +1,6 @@
 window.dataset = {
-    inputWidth: $('#eyes').width(),
-    inputHeight: $('#eyes').height(),
+    inputWidth: 25,
+    inputHeight: 50,
     train: {
         n: 0,
         x: null,
@@ -68,23 +68,23 @@ window.dataset = {
 //         return Math.random() < 0.2 ? 'val' : 'train';
 //     },
 //
-//     rgbToGrayscale(image, n, x, y) {
-//         // Given an rgb tensor, returns a grayscale value.
-//         // Inspired by http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0029740
-//         let r = (image.get(n, x, y, 0) + 1) / 2;
-//         let g = (image.get(n, x, y, 1) + 1) / 2;
-//         let b = (image.get(n, x, y, 2) + 1) / 2;
-//
-//         // Gamma correction:
-//         const exponent = 1 / 2.2;
-//         r = Math.pow(r, exponent);
-//         g = Math.pow(g, exponent);
-//         b = Math.pow(b, exponent);
-//
-//         // Gleam:
-//         const gleam = (r + g + b) / 3;
-//         return gleam * 2 - 1;
-//     },
+    rgbToGrayscale(image, n, x, y) {
+        // Given an rgb tensor, returns a grayscale value.
+        // Inspired by http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0029740
+        let r = (image.get(n, x, y, 0) + 1) / 2;
+        let g = (image.get(n, x, y, 1) + 1) / 2;
+        let b = (image.get(n, x, y, 2) + 1) / 2;
+
+        // Gamma correction:
+        const exponent = 1 / 2.2;
+        r = Math.pow(r, exponent);
+        g = Math.pow(g, exponent);
+        b = Math.pow(b, exponent);
+
+        // Gleam:
+        const gleam = (r + g + b) / 3;
+        return gleam * 2 - 1;
+    },
 //
 //     convertImage: function(image) {
 //         // Convert to grayscale and add spatial info

@@ -48,7 +48,7 @@ function fitModel() {
         currentModel = training.createModel();
     }
 
-    training.currentModel.compile({
+    currentModel.compile({
         optimizer: tf.train.adam(0.0005),
         loss: 'meanSquaredError',
     });
@@ -73,7 +73,7 @@ window.training = {
 
         const inputMeta = tf.input({
             name: 'metaInfo',
-            shape: [4],
+            shape: [1],
         });
 
         const conv = tf.layers.conv2d({
@@ -104,8 +104,7 @@ window.training = {
         .apply(concat);
 
         // Create the model based on the inputs
-        const model = tf.model({inputs: input, outputs: output});
+        return tf.model({inputs: [inputImage, inputMeta], outputs: output});
 
-        return model;
     }
 }
