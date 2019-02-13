@@ -41,7 +41,7 @@ function drawExpressions(dimensions, canvas, results, thresh, withBoxes = true) 
     faceapi.drawFaceExpressions(canvas, resizedResults.map(({ detection, expressions }) => ({ position: detection.box, expressions })))
 }
 
-function displayEyes(leftEye, rightEye) {
+function displayBothEyes(leftEye, rightEye) {
     const eyesCanvas = $('#eyes').get(0);
     const eyesCanvasContext = eyesCanvas.getContext('2d');
     const video = $('#inputVideo').get(0);
@@ -49,6 +49,13 @@ function displayEyes(leftEye, rightEye) {
     eyesCanvasContext.drawImage(video, rightEye[0], rightEye[1], rightEye[2], rightEye[3], 0, eyesCanvas.height/2, eyesCanvas.height/2, eyesCanvas.width);
 
 
+}
+
+function displayEyes(eyes) {
+    const eyesCanvas = $('#eyes').get(0);
+    const eyesCanvasContext = eyesCanvas.getContext('2d');
+    const video = $('#inputVideo').get(0);
+    eyesCanvasContext.drawImage(video, eyes[0], eyes[1], eyes[2], eyes[3], 0, 0, eyesCanvas.width, eyesCanvas.height);
 }
 
 function displayEyesRotated(rotationAngle, eyesRect) {

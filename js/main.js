@@ -33,7 +33,9 @@ async function onPlay() {
 
             leftEyeRect = getLeftEyeRect(result.landmarks);
             rightEyeRect = getRightEyeRect(result.landmarks);
-            displayEyes(leftEyeRect, rightEyeRect);
+            bothEyesRect = getEyesRect(result.landmarks);
+
+            displayEyes(bothEyesRect);
 
 
         }
@@ -66,6 +68,24 @@ function getEyeRotation(landmarks) {
     var leftEye = landmarks.getLeftEye();
 
     return  angleBetweenTwoPoints(leftEye[0],leftEye[3]);
+}
+
+function getEyesRect(landmarks) {
+    var leftEye = landmarks.getLeftEye();
+    var rightEye = landmarks.getRightEye();
+    const minX = Math.min(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x,
+        rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) - 10;
+    const maxX = Math.max(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x,
+        rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) + 10;
+    const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y,
+        rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) - 3;
+    const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y,
+        rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) + 3;
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+    return [minX, minY, width, height * 1.25];
+
 }
 
 
@@ -126,28 +146,24 @@ function getImage() {
     });
 }
 
-function addToDataset(image, metaInfo, target, key) {
+function addToDataset(image, target, key) {
     const set = dataset[key];
-    console.log(set)
-    console.log(dataset.inputWidth, dataset.inputHeight);
     if (set.x == null) {
-        set.x = [tf.keep(image), tf.keep(metaInfo)];
+        set.x = tf.keep(image);
         set.y = tf.keep(target);
     } else {
-        const oldImage = set.x[0];
-        console.log(oldImage);
-        console.log(set);
+        const oldImage = set.x;
 
-        set.x[0] = tf.keep(oldImage.concat(image, 0));
+        set.x = tf.keep(oldImage.concat(image, 0));
 
-        const oldEyePos = set.x[1];
-        set.x[1] = tf.keep(oldEyePos.concat(metaInfo, 0));
+        // const oldEyePos = set.x[1];
+        // set.x[1] = tf.keep(oldEyePos.concat(metaInfo, 0));
 
         const oldY = set.y;
         set.y = tf.keep(oldY.concat(target, 0));
 
         oldImage.dispose();
-        oldEyePos.dispose();
+        // oldEyePos.dispose();
         oldY.dispose();
         target.dispose();
     }
@@ -178,7 +194,7 @@ function convertImage(image) {
     return tf.tensor(data);
 }
 
-function addExample(image, metaInfo, target) {
+function addExample(image, target) {
     // Given an image, eye pos and target coordinates, adds them to our dataset.
 
     target[0] = target[0] - 0.5;
@@ -189,9 +205,11 @@ function addExample(image, metaInfo, target) {
 
     const key = Math.random() > 0.2 ? 'train' : 'val';
 
-    image = convertImage(image);
-    console.log(image, metaInfo, target, key);
-    addToDataset(image, metaInfo, target, key);
+    // image = convertImage(image);
+    // console.log(image, metaInfo, target, key);
+    // addToDataset(image, metaInfo, target, key);
+    console.log(image, target, key);
+    addToDataset(image, target, key);
 }
 
 // getMetaInfos: function(mirror) {
@@ -221,24 +239,25 @@ function addExample(image, metaInfo, target) {
 //     });
 // },
 
-function getMetaInfo() {
-    // Get some meta info about the rectangle as a tensor:
-    // - middle x, y of the eye rectangle, relative to video size TODO
-    // - size of eye rectangle, relative to video size TODO
-    // - angle of rectangle (TODO)
-
-    const faceAngle = getFaceRotationAngle(currentLandmarks);
-    return tf.tidy(function() {
-        return tf.tensor1d([faceAngle]).expandDims(0);
-    });
-}
+// function getMetaInfo() {
+//     // Get some meta info about the rectangle as a tensor:
+//     // - middle x, y of the eye rectangle, relative to video size TODO
+//     // - size of eye rectangle, relative to video size TODO
+//     // - angle of rectangle (TODO)
+//
+//     const faceAngle = getFaceRotationAngle(currentLandmarks);
+//     return tf.tidy(function() {
+//         return tf.tensor1d([faceAngle]).expandDims(0);
+//     });
+// }
 function captureExample() {
 
     tf.tidy(function() {
         const img = getImage();
         const mousePos = mouse.getMousePos();
-        const metaInfo = getMetaInfo();
-        addExample(img, metaInfo, mousePos);
+        // const metaInfo = getMetaInfo();
+        console.log(mousePos);
+        addExample(img, mousePos);
     });
 
     // console.log('Example captured.');
@@ -291,15 +310,17 @@ function moveTarget() {
     }
     tf.tidy(function() {
         const image = getImage();
-        const metaInfo = getMetaInfo();
-        const prediction = currentModel.predict([image, metaInfo]);
+        // const metaInfo = getMetaInfo();
+        const prediction = currentModel.predict(image);
 
         // Convert normalized position back to screen position:
         const target = $('#target');
         const targetWidth = target.outerWidth();
         const targetHeight = target.outerHeight();
+        console.log(prediction.get(0,0), prediction.get(0,1));
         const x = (prediction.get(0, 0) + 1) / 2 * ($(window).width() - targetWidth);
         const y = (prediction.get(0, 1) + 1) / 2 * ($(window).height() - targetHeight);
+        console.log(x,y);
 
         // Move target there:
         target.css('left', x + 'px');
@@ -311,6 +332,6 @@ $(document).ready(function() {
 
     run();
     setupKeys();
-    setInterval(moveTarget, 100);
+    setInterval(moveTarget, 200);
 
 });

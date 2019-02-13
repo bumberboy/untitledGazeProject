@@ -1,6 +1,6 @@
 window.dataset = {
-    inputWidth: 25,
-    inputHeight: 50,
+    inputWidth: 50,
+    inputHeight: 25,
     train: {
         n: 0,
         x: null,

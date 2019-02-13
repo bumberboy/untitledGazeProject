@@ -93,10 +93,13 @@
 
 #eyes, #eyesRotated {
     background-color: crimson;
+    /*filter: brightness(400%) contrast(100%) grayscale(100%);*/
+
 }
 
 #facesContainer canvas {
     margin: 10px;
+
 }
 
 #training {

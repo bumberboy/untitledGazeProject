@@ -71,10 +71,10 @@ window.training = {
             shape: [dataset.inputHeight, dataset.inputWidth, 3],
         });
 
-        const inputMeta = tf.input({
-            name: 'metaInfo',
-            shape: [1],
-        });
+        // const inputMeta = tf.input({
+        //     name: 'metaInfo',
+        //     shape: [1],
+        // });
 
         const conv = tf.layers.conv2d({
             kernelSize: 5,
@@ -94,17 +94,17 @@ window.training = {
 
         const dropout = tf.layers.dropout(0.2).apply(flat);
 
-        const concat = tf.layers.concatenate().apply([dropout, inputMeta]);
+        // const concat = tf.layers.concatenate().apply([dropout, inputMeta]);
 
         const output = tf.layers.dense({
             units: 2,
             activation: 'tanh',
             kernelInitializer: 'varianceScaling',
         })
-        .apply(concat);
+        .apply(dropout);
 
         // Create the model based on the inputs
-        return tf.model({inputs: [inputImage, inputMeta], outputs: output});
+        return tf.model({inputs: inputImage, outputs: output});
 
     }
 }
