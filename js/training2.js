@@ -6,7 +6,7 @@ window.training2 = {
   createModel: function() {
     const inputImage = tf.input({
       name: 'image',
-      shape: [dataset.inputHeight, dataset.inputWidth, 3],
+      shape: [datasets.inputHeight, datasets.inputWidth, 3],
     });
     const inputMeta = tf.input({
       name: 'metaInfos',
@@ -57,17 +57,17 @@ window.training2 = {
     this.inTraining = true;
     const epochs = 10;
 
-    let batchSize = Math.floor(dataset.train.n * 0.1);
+    let batchSize = Math.floor(datasets.train.n * 0.1);
     batchSize = Math.max(2, Math.min(batchSize, 64));
 
     $('#start-training').prop('disabled', true);
     $('#start-training').html('In Progress...');
 
     if (training.currentModel == null) {
-      training.currentModel = training.createModel();
+      training.currentModel = training.createModelWithMeta();
     }
 
-    console.info('Training on', dataset.train.n, 'samples');
+    console.info('Training on', datasets.train.n, 'samples');
 
     ui.state = 'training';
 
@@ -81,11 +81,11 @@ window.training2 = {
       loss: 'meanSquaredError',
     });
 
-    training.currentModel.fit(dataset.train.x, dataset.train.y, {
+    training.currentModel.fit(datasets.train.x, datasets.train.y, {
       batchSize: batchSize,
       epochs: epochs,
       shuffle: true,
-      validationData: [dataset.val.x, dataset.val.y],
+      validationData: [datasets.val.x, datasets.val.y],
       callbacks: {
         onEpochEnd: async function(epoch, logs) {
           console.info('Epoch', epoch, 'losses:', logs);
@@ -140,9 +140,9 @@ window.training2 = {
   getPrediction: function() {
     // Return relative x, y where we expect the user to look right now.
     return tf.tidy(function() {
-      let img = dataset.getImage();
-      img = dataset.convertImage(img);
-      const metaInfos = dataset.getMetaInfos();
+      let img = datasets.getImage();
+      img = datasets.convertImage(img);
+      const metaInfos = datasets.getMetaInfos();
       const prediction = training.currentModel.predict([img, metaInfos]);
 
       return [prediction.get(0, 0) + 0.5, prediction.get(0, 1) + 0.5];

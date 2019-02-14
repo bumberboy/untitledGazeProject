@@ -51,12 +51,73 @@ function displayBothEyes(leftEye, rightEye) {
 
 }
 
-function displayEyes(eyes) {
+function displayEye(eyes) {
     const eyesCanvas = $('#eyes').get(0);
     const eyesCanvasContext = eyesCanvas.getContext('2d');
     const video = $('#inputVideo').get(0);
     eyesCanvasContext.drawImage(video, eyes[0], eyes[1], eyes[2], eyes[3], 0, 0, eyesCanvas.width, eyesCanvas.height);
 }
+
+function displayEyes(leftEye, rightEye) {
+    const leftEyeCanvas = $('#leftEye').get(0);
+    const leftEyeCanvasContext = leftEyeCanvas.getContext('2d');
+    const rightEyeCanvas = $('#rightEye').get(0);
+    const rightEyeCanvasContext = rightEyeCanvas.getContext('2d');
+    const video = $('#inputVideo').get(0);
+    leftEyeCanvasContext.drawImage(video, leftEye[0], leftEye[1], leftEye[2], leftEye[3], 0, 0, leftEyeCanvas.width, leftEyeCanvas.height);
+    rightEyeCanvasContext.drawImage(video, rightEye[0], rightEye[1], rightEye[2], rightEye[3], 0, 0, rightEyeCanvas.width, rightEyeCanvas.height);
+    // rightEyeCanvasContext.drawImage(leftEyeCanvas, 0, 0);
+    // grayscale(leftEyeCanvas, leftEyeCanvas);
+    // grayscale(rightEyeCanvas, rightEyeCanvas);
+
+}
+
+// var biggestGray = 0;
+// var smallestGray = 400;
+
+// function grayscale (input,output) {
+//     //Get the context for the loaded image
+//     var inputContext = input.getContext("2d");
+//     //get the image data;
+//     var imageData = inputContext.getImageData(0, 0, input.width, input.height);
+//     //Get the CanvasPixelArray
+//     var data = imageData.data;
+//
+//     //Get length of all pixels in image each pixel made up of 4 elements for each pixel, one for Red, Green, Blue and Alpha
+//     var arraylength = input.width * input.height * 4;
+//     //Go through each pixel from bottom right to top left and alter to its gray equiv
+//
+//     //Common formula for converting to grayscale.
+//     //gray = 0.3*R + 0.59*G + 0.11*B
+//
+//     for (var i=arraylength-1; i>0;i-=4)
+//     {
+//         //R= i-3, G = i-2 and B = i-1
+//         //Get our gray shade using the formula
+//         var gray = 0.3 * data[i-3] + 0.59 * data[i-2] + 0.11 * data[i-1];
+//
+//         // // Store gray values so that we can increase contrast
+//         if (gray > biggestGray) {biggestGray = gray};
+//         if (gray < smallestGray) { smallestGray = gray};
+//
+//         const midGray = (biggestGray - smallestGray)/2 + smallestGray - 30;
+//         if (gray > midGray) { gray = gray + 10 }
+//         else { gray = gray - 10};
+//
+//         //Set our 3 RGB channels to the computed gray.
+//         data[i-3] = gray + 40;
+//         data[i-2] = gray + 40;
+//         data[i-1] = gray + 40;
+//
+//     }
+//
+//
+//     //get the output context
+//     var outputContext = output.getContext("2d");
+//
+//     //Display the output image
+//     outputContext.putImageData(imageData, 0, 0);
+// }
 
 function displayEyesRotated(rotationAngle, eyesRect) {
     const eyesCanvas = $('canvas#eyesRotated').get(0);

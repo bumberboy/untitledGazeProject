@@ -91,23 +91,22 @@
     left: 0;
 }
 
-#eyes, #eyesRotated {
+#eyes, #leftEye {
     background-color: crimson;
-    /*filter: brightness(400%) contrast(100%) grayscale(100%);*/
 
 }
 
-#facesContainer canvas {
-    margin: 10px;
+/*#facesContainer canvas {*/
+    /*margin: 10px;*/
 
-}
+/*}*/
 
 #training {
     position: absolute;
     top: 0;
     right: 0;
     width: 400px;
-    background-color: lightblue;
+    background-color: #f5f5f5;
     padding: 0.5em;
 }
 

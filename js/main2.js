@@ -53,7 +53,7 @@
 //
 // let currentModel;
 //
-// const dataset = {
+// const datasets = {
 //     train: {
 //         n: 0,
 //         x: null,
@@ -83,14 +83,14 @@
 //
 // function captureExample() {
 //     console.log('Example captured.')
-//     // Take the latest image from the eyes canvas and add it to our dataset.
+//     // Take the latest image from the eyes canvas and add it to our datasets.
 //     tf.tidy(function() {
 //         const image = getImage();
 //         console.log(image);
 //         const mousePos = tf.tensor1d([mouse.x, mouse.y]).expandDims(0);
 //
 //         // Choose whether to add it to training (80%) or validation (20%) set:
-//         const subset = dataset[Math.random() > 0.2 ? 'train' : 'val'];
+//         const subset = datasets[Math.random() > 0.2 ? 'train' : 'val'];
 //
 //         if (subset.x == null) {
 //             // Create new tensors
@@ -112,7 +112,7 @@
 //
 // function fitModel() {
 //     console.log('Attempting to fit model...');
-//     let batchSize = Math.floor(dataset.train.n * 0.1);
+//     let batchSize = Math.floor(datasets.train.n * 0.1);
 //     if (batchSize < 4) {
 //         batchSize = 4;
 //     } else if (batchSize > 64) {
@@ -121,18 +121,18 @@
 //
 //     if (currentModel == null) {
 //         console.log('No current model... create Model.');
-//         currentModel = createModel();
+//         currentModel = createModelWithMeta();
 //         console.log('Model created.')
 //     }
 //
 //     console.log('Fitting to model.')
-//     console.log(dataset)
+//     console.log(datasets)
 //     console.log(currentModel);
-//     currentModel.fit(dataset.train.x, dataset.train.y, {
+//     currentModel.fit(datasets.train.x, datasets.train.y, {
 //         batchSize: batchSize,
 //         epochs: 20,
 //         shuffle: true,
-//         validationData: [dataset.val.x, dataset.val.y],
+//         validationData: [datasets.val.x, datasets.val.y],
 //     });
 //     setTimeout(()=>{
 //         console.log(currentModel);
@@ -158,7 +158,7 @@
 // }
 //
 //
-// function createModel() {
+// function createModelWithMeta() {
 //     const model = tf.sequential();
 //
 //     model.add(tf.layers.conv2d({
