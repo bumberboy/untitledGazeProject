@@ -95,8 +95,8 @@ function getLeftEyeRect(landmarks) {
 
     const minX = Math.min(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x) - 10;
     const maxX = Math.max(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x) + 10;
-    const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) - 0;
-    const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) + 0;
+    const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) - 4;
+    const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) + 4;
 
     const width = maxX - minX;
     const height = maxY - minY;
@@ -109,8 +109,8 @@ function getRightEyeRect(landmarks) {
 
     const minX = Math.min(rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) - 10;
     const maxX = Math.max(rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) + 10;
-    const minY = Math.min(rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) - 0;
-    const maxY = Math.max(rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) + 0;
+    const minY = Math.min(rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) - 4
+    const maxY = Math.max(rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) + 4;
     const width = maxX - minX;
     const height = maxY - minY;
     return [minX, minY, width, height * 1.25];
@@ -118,7 +118,7 @@ function getRightEyeRect(landmarks) {
 }
 
 
-async function run() {
+async function loadFaceDetector() {
     //load face detection model
     const MODEL_URL = '/untitledGazeProject';
     await faceapi.loadTinyFaceDetectorModel(MODEL_URL);
@@ -128,6 +128,9 @@ async function run() {
     changeInputSize(224);
 
 
+}
+
+async function loadWebCam() {
     //access user's webcam and stream feed to the video element
     const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
     const videoEl = $('#inputVideo').get(0);
@@ -159,31 +162,25 @@ function convertImage(image) {
 }
 
 
-
-
-// function getMetaInfo() {
-//     // Get some meta info about the rectangle as a tensor:
-//     // - middle x, y of the eye rectangle, relative to video size TODO
-//     // - size of eye rectangle, relative to video size TODO
-//     // - angle of rectangle (TODO)
-//
-//     const faceAngle = getFaceRotationAngle(currentLandmarks);
-//     return tf.tidy(function() {
-//         return tf.tensor1d([faceAngle]).expandDims(0);
-//     });
-// }
-
-
 function setupKeys() {
     $('body').keyup(function(event) {
         // On space key:
-        if (event.keyCode == 32) {
-            dataset.captureExample();
+        if (event.key === ' ') {
+
+            dataset.captureExample(mouse.getMousePos());
 
             event.preventDefault();
             return false;
+        } else if (event.key === 'r') {
+            targetTraining.runTargetTraining('rect');
+        } else if (event.key === 't') {
+            targetTraining.stopTargetTraining();
+        } else if (event.key === 'f') {
+            targetTraining.runTargetTraining('circle');
         }
     });
+
+
 
     $('#train').click(function() {
         training.fitModel();
@@ -219,22 +216,40 @@ function moveTarget() {
         const target = $('#target');
         const targetWidth = target.outerWidth();
         const targetHeight = target.outerHeight();
-        console.log(prediction.get(0,0), prediction.get(0,1));
+        // console.log(prediction.get(0,0), prediction.get(0,1));
         const x = (prediction.get(0, 0) + 1) / 2 * ($(window).width() - targetWidth);
         const y = (prediction.get(0, 1) + 1) / 2 * ($(window).height() - targetHeight);
 
         // Move target there:
         target.css('left', x + 'px');
         target.css('top', y + 'px');
+
+        heatmap.addData({ x: x, y: y, value: 0.1     })
+    });
+}
+
+var heatmap = null;
+
+function drawHeatmap() {
+    heatmap = h337.create({
+        container: document.getElementById('heatmapContainer'),
+        maxOpacity: .6,
+        radius: 100,
+        blur: .950,
+        // backgroundColor with alpha so you can see through it
     });
 }
 
 $(document).ready(function() {
 
-    run();
+    loadFaceDetector();
+    loadWebCam();
     setupKeys();
+    // targetTraining.runTargetTraining();
     setInterval(moveTarget, 100);
     console.log("Model uses metadata:", training.useMetaData);
     console.log("Model uses 2 eyes:", training.useTwoEyes);
+    drawHeatmap();
+
 
 });

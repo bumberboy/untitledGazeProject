@@ -15,3 +15,4 @@ window.mouse = {
 };
 
 document.onmousemove = mouse.handleMouseMove;
+

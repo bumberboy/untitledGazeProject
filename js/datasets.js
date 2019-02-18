@@ -1,6 +1,6 @@
 window.dataset = {
-    inputWidth: 35,
-    inputHeight: 25,
+    inputWidth: 40,
+    inputHeight: 40,
     train: {
         n: 0,
         x: null,
@@ -43,7 +43,17 @@ window.dataset = {
         });
     },
 
-
+// function getMetaInfo() {
+//     // Get some meta info about the rectangle as a tensor:
+//     // - middle x, y of the eye rectangle, relative to video size TODO
+//     // - size of eye rectangle, relative to video size TODO
+//     // - angle of rectangle (TODO)
+//
+//     const faceAngle = getFaceRotationAngle(currentLandmarks);
+//     return tf.tidy(function() {
+//         return tf.tensor1d([faceAngle]).expandDims(0);
+//     });
+// }
     getMetaInfos: function(mirror) {
         // Get some meta info about the rectangle as a tensor:
         // - middle x, y of the eye rectangle, relative to video size
@@ -124,7 +134,7 @@ window.dataset = {
     addToDataset: function(img, metaInfos, target, key) {
         // Add the given x, y to either 'train' or 'val'.
         const set = dataset[key];
-        console.log("Adding...: ", img, metaInfos);
+        // console.log("Adding...: ", img, metaInfos);
 
         if (set.x == null) {
             if (training.useMetaData) {
@@ -202,9 +212,9 @@ window.dataset = {
         ui.onAddExample(dataset.train.n, dataset.val.n);
     },
 
-    captureExample: function() {
-        // Take the latest image from the eyes canvas and add it to our dataset.
-        // Takes the coordinates of the mouse.
+    captureExample: function(targetPosition) {
+        // Take the latest image from the eyes canvas and add it to our dataset along with the supposed gaze position.
+
         tf.tidy(function() {
             var img = null;
             if (training.useMetaData) {
@@ -214,11 +224,10 @@ window.dataset = {
             } else {
                 img = dataset.getImage();
             }
-            const mousePos = mouse.getMousePos();
-            console.log("mousePOs:",mousePos);
+            console.log("Gaze position captured:",targetPosition);
             const metaInfos = dataset.getMetaInfos();
 
-            dataset.addExample(img, metaInfos, mousePos);
+            dataset.addExample(img, metaInfos, targetPosition);
         });
     },
 
