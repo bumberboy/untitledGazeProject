@@ -20,6 +20,7 @@ function drawLandmarks(dimensions, canvas, results, withBoxes = true) {
 
     if (withBoxes) {
         faceapi.drawDetection(canvas, resizedResults.map(det => det.detection))
+        console.log(resizedResults.map(det => det.detection)[0].box)
     }
 
     const faceLandmarks = resizedResults.map(det => det.landmarks)
@@ -69,6 +70,10 @@ function displayEyes(leftEye, rightEye) {
     // rightEyeCanvasContext.drawImage(leftEyeCanvas, 0, 0);
     // grayscale(leftEyeCanvas, leftEyeCanvas);
     // grayscale(rightEyeCanvas, rightEyeCanvas);
+
+}
+
+function displayFace(face) {
 
 }
 

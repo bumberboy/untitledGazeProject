@@ -43,17 +43,7 @@ window.dataset = {
         });
     },
 
-// function getMetaInfo() {
-//     // Get some meta info about the rectangle as a tensor:
-//     // - middle x, y of the eye rectangle, relative to video size TODO
-//     // - size of eye rectangle, relative to video size TODO
-//     // - angle of rectangle (TODO)
-//
-//     const faceAngle = getFaceRotationAngle(currentLandmarks);
-//     return tf.tidy(function() {
-//         return tf.tensor1d([faceAngle]).expandDims(0);
-//     });
-// }
+
     getMetaInfos: function(mirror) {
         // Get some meta info about the rectangle as a tensor:
         // - middle x, y of the eye rectangle, relative to video size

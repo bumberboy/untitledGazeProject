@@ -35,12 +35,13 @@ async function onPlay() {
             const leftEyeRect = getLeftEyeRect(result.landmarks);
             const rightEyeRect = getRightEyeRect(result.landmarks);
             const bothEyesRect = getEyesRect(result.landmarks);
+            const faceRect = getFaceRect(result.landmarks);
 
             displayEye(leftEyeRect);
             displayEyes(leftEyeRect, rightEyeRect);
 
         }
-        drawLandmarks(videoEl, $('#overlay').get(0), [result], false)
+        drawLandmarks(videoEl, $('#overlay').get(0), [result], true)
     }
 
     setTimeout(() => onPlay())
@@ -114,6 +115,11 @@ function getRightEyeRect(landmarks) {
     const width = maxX - minX;
     const height = maxY - minY;
     return [minX, minY, width, height * 1.25];
+
+}
+
+function getFaceRect(landmarks) {
+    var face = landmarks.getJawOutline();
 
 }
 

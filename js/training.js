@@ -244,15 +244,7 @@ window.training = {
             kernelInitializer: 'varianceScaling'
         }).apply(inputImageA);
         const maxpoolA = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA);
-        const convA2 = tf.layers.conv2d({
-            kernelSize: 5,
-            filters: 20,
-            strides: 1,
-            activation: 'relu',
-            kernelInitializer: 'varianceScaling'
-        }).apply(maxpoolA);
-        const maxpoolA2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA2);
-        const flatA = tf.layers.flatten().apply(maxpoolA2);
+        const flatA = tf.layers.flatten().apply(maxpoolA);
         const dropoutA = tf.layers.dropout(0.2).apply(flatA);
 
 
@@ -265,15 +257,8 @@ window.training = {
             kernelInitializer: 'varianceScaling'
         }).apply(inputImageB);
         const maxpoolB = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB);
-        const convB2 = tf.layers.conv2d({
-            kernelSize: 5,
-            filters: 20,
-            strides: 1,
-            activation: 'relu',
-            kernelInitializer: 'varianceScaling'
-        }).apply(maxpoolB);
-        const maxpoolB2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB2);
-        const flatB = tf.layers.flatten().apply(maxpoolB2);
+        const flatB = tf.layers.flatten().apply(maxpoolB);
         const dropoutB = tf.layers.dropout(0.2).apply(flatB);
-    }
+
+
 }
