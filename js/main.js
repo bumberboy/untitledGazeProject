@@ -41,6 +41,9 @@ async function onPlay() {
             displayEyes(leftEyeRect, rightEyeRect);
 
         }
+        if ('detection' in result) {
+            displayFace(result.detection.box);
+        }
         drawLandmarks(videoEl, $('#overlay').get(0), [result], true)
     }
 
@@ -211,6 +214,11 @@ function moveTarget() {
             prediction = training.currentModel.predict([images[0], images[1], metaInfos]);
 
 
+        } else if (training.useTwoEyesAndFace) {
+            const images = dataset.getImages();
+            prediction = training.currentModel.predict([images[0], images[1], images[2], metaInfos]);
+
+
         } else {
             const image = dataset.getImage();
 
@@ -255,6 +263,8 @@ $(document).ready(function() {
     setInterval(moveTarget, 100);
     console.log("Model uses metadata:", training.useMetaData);
     console.log("Model uses 2 eyes:", training.useTwoEyes);
+    console.log("Model uses 2 eyes and face:", training.useTwoEyesAndFace);
+
     drawHeatmap();
 
 

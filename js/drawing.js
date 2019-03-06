@@ -20,7 +20,7 @@ function drawLandmarks(dimensions, canvas, results, withBoxes = true) {
 
     if (withBoxes) {
         faceapi.drawDetection(canvas, resizedResults.map(det => det.detection))
-        console.log(resizedResults.map(det => det.detection)[0].box)
+        // console.log(resizedResults.map(det => det.detection)[0].box)
     }
 
     const faceLandmarks = resizedResults.map(det => det.landmarks)
@@ -42,13 +42,13 @@ function drawExpressions(dimensions, canvas, results, thresh, withBoxes = true) 
     faceapi.drawFaceExpressions(canvas, resizedResults.map(({ detection, expressions }) => ({ position: detection.box, expressions })))
 }
 
-function displayBothEyes(leftEye, rightEye) {
-    const eyesCanvas = $('#eyes').get(0);
-    const eyesCanvasContext = eyesCanvas.getContext('2d');
-    const video = $('#inputVideo').get(0);
-    eyesCanvasContext.drawImage(video, leftEye[0], leftEye[1], leftEye[2], leftEye[3], 0, 0, eyesCanvas.height/2, eyesCanvas.width);
-    eyesCanvasContext.drawImage(video, rightEye[0], rightEye[1], rightEye[2], rightEye[3], 0, eyesCanvas.height/2, eyesCanvas.height/2, eyesCanvas.width);
 
+
+function displayFace(faceBox) {
+    const faceCanvas = $('#face').get(0);
+    const faceCanvasContext = faceCanvas.getContext('2d');
+    const video = $('#inputVideo').get(0);
+    faceCanvasContext.drawImage(video, faceBox.x, faceBox.y, faceBox.width, faceBox.height,0,0, faceCanvas.width, faceCanvas.height);
 
 }
 
@@ -65,6 +65,7 @@ function displayEyes(leftEye, rightEye) {
     const rightEyeCanvas = $('#rightEye').get(0);
     const rightEyeCanvasContext = rightEyeCanvas.getContext('2d');
     const video = $('#inputVideo').get(0);
+
     leftEyeCanvasContext.drawImage(video, leftEye[0], leftEye[1], leftEye[2], leftEye[3], 0, 0, leftEyeCanvas.width, leftEyeCanvas.height);
     rightEyeCanvasContext.drawImage(video, rightEye[0], rightEye[1], rightEye[2], rightEye[3], 0, 0, rightEyeCanvas.width, rightEyeCanvas.height);
     // rightEyeCanvasContext.drawImage(leftEyeCanvas, 0, 0);
@@ -73,9 +74,6 @@ function displayEyes(leftEye, rightEye) {
 
 }
 
-function displayFace(face) {
-
-}
 
 // var biggestGray = 0;
 // var smallestGray = 400;

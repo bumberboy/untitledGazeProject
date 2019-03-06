@@ -1,6 +1,8 @@
 window.dataset = {
-    inputWidth: 40,
-    inputHeight: 40,
+    eyeCanvasWidth: 26,
+    eyeCanvasHeight: 26,
+    faceCanvasWidth: 40,
+    faceCanvasHeight: 40,
     train: {
         n: 0,
         x: null,
@@ -32,14 +34,17 @@ window.dataset = {
         return tf.tidy(function() {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
             const imageB = tf.fromPixels(document.getElementById('rightEye'));
+            const imageC = tf.fromPixels(document.getElementById('face'));
 
             // Add a batch dimension:
             const batchedImageA = imageA.expandDims(0);
             const batchedImageB = imageB.expandDims(0);
+            const batchedImageC = imageC.expandDims(0);
 
             // Normalize and return it:
             return [batchedImageA.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
-                batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1))];
+                batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
+                batchedImageC.toFloat().div(tf.scalar(127)).sub(tf.scalar(1))];
         });
     },
 
@@ -133,6 +138,9 @@ window.dataset = {
             } else if (training.useTwoEyes) {
                 set.x = [tf.keep(img[0]), tf.keep(img[1]), tf.keep(metaInfos)];
 
+            } else if (training.useTwoEyesAndFace) {
+                set.x = [tf.keep(img[0]), tf.keep(img[1]), tf.keep(img[2]), tf.keep(metaInfos)];
+
             } else {
                 set.x = tf.keep(img);
             }
@@ -160,6 +168,24 @@ window.dataset = {
 
                 oldImageA.dispose();
                 oldImageB.dispose();
+                oldMeta.dispose();
+
+            } else if (training.useTwoEyesAndFace) {
+                const oldImageA = set.x[0];
+                set.x[0] = tf.keep(oldImageA.concat(img[0], 0));
+
+                const oldImageB = set.x[1];
+                set.x[1] = tf.keep(oldImageB.concat(img[1], 0));
+
+                const oldImageC = set.x[2];
+                set.x[2] = tf.keep(oldImageC.concat(img[2], 0));
+
+                const oldMeta = set.x[3];
+                set.x[3] = tf.keep(oldMeta.concat(metaInfos, 0));
+
+                oldImageA.dispose();
+                oldImageB.dispose();
+                oldImageC.dispose();
                 oldMeta.dispose();
 
             } else {
@@ -209,7 +235,7 @@ window.dataset = {
             var img = null;
             if (training.useMetaData) {
                 img = dataset.getImage();
-            } else if (training.useTwoEyes) {
+            } else if (training.useTwoEyes || training.useTwoEyesAndFace) {
                 img = dataset.getImages();
             } else {
                 img = dataset.getImage();
