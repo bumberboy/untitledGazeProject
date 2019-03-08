@@ -28,11 +28,7 @@ window.training = {
                 training.currentModel = training.createModelBothEyesFace();
 
             } else if (training.useEyesFaceFacePos) {
-                if (training.useMultipleModels) {
-                    training.currentModels = [training.createModelBothEyesFaceFacePos(),
-                                                training.createModelWithBothEyesMeta()];
-
-                }
+                training.currentModel = training.createModelBothEyesFaceFacePos();
 
             } else {
                 training.currentModel = training.createModel();
@@ -40,7 +36,6 @@ window.training = {
             }
         }
 
-        console.log(training.currentModel);
 
         let bestEpoch = -1;
         let bestTrainLoss = Number.MAX_SAFE_INTEGER;
@@ -368,7 +363,7 @@ window.training = {
         const inputImageB = tf.input({name: 'imageB', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
         const convB = tf.layers.conv2d({
             kernelSize: 5,
-            filters: 20,
+            filters: 20
             strides: 1,
             activation: 'relu',
             kernelInitializer: 'varianceScaling'
@@ -389,7 +384,7 @@ window.training = {
         const flatC = tf.layers.flatten().apply(maxpoolC);
         const dropoutC = tf.layers.dropout(0.2).apply(flatC);
 
-        const inputFaceGrid = tf.input({name: 'face', shape:[dataset.faceGrid.height, dataset.faceGrid.width, 1],});
+        const inputFaceGrid = tf.input({name: 'faceGrid', shape:[dataset.faceGrid.height, dataset.faceGrid.width, 3],});
         const convFaceGrid = tf.layers.conv2d({
             kernelSize: 4,
             filters:10,

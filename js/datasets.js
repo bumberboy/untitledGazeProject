@@ -1,9 +1,9 @@
 window.dataset = {
-    eyeCanvasWidth: 26,
-    eyeCanvasHeight: 26,
-    faceCanvasWidth: 40,
-    faceCanvasHeight: 40,
-    faceGrid: {width: 32, height: 24},
+    eyeCanvasWidth: 20,
+    eyeCanvasHeight: 20,
+    faceCanvasWidth: 20,
+    faceCanvasHeight: 20,
+    faceGrid: {width: 20, height: 20},
     train: {
         n: 0,
         x: null,
@@ -55,43 +55,20 @@ window.dataset = {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
             const imageB = tf.fromPixels(document.getElementById('rightEye'));
             const imageC = tf.fromPixels(document.getElementById('face'));
-            const imageD = tf.tensor([  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
-                                        [24,32],'bool').expandDims(0);
+            const imageD = tf.fromPixels(document.getElementById('mask'), numChan);
 
             // Add a batch dimension:
             const batchedImageA = imageA.expandDims(0);
             const batchedImageB = imageB.expandDims(0);
             const batchedImageC = imageC.expandDims(0);
+            const batchedImageD = imageD.expandDims(0);
 
 
             // Normalize and return it:
             return [batchedImageA.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                     batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                     batchedImageC.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
-                    imageD];
+                    batchedImageD.toFloat().div(tf.scalar(127)).sub(tf.scalar(1))];
         });
     },
 
@@ -249,9 +226,8 @@ window.dataset = {
                 set.x[2] = tf.keep(oldImageC.concat(img[2], 0));
 
                 const oldImageD = set.x[3];
-                console.log(oldImageD);
-                console.log(img[3]);
-                set.x[3] = tf.keep(oldImageC.concat(img[3], 0));
+
+                set.x[3] = tf.keep(oldImageD.concat(img[3], 0));
 
                 oldImageA.dispose();
                 oldImageB.dispose();

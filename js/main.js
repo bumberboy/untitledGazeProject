@@ -37,12 +37,12 @@ async function onPlay() {
             const bothEyesRect = getEyesRect(result.landmarks);
             const faceRect = getFaceRect(result.landmarks);
 
-            displayEye(leftEyeRect);
             displayEyes(leftEyeRect, rightEyeRect);
 
         }
         if ('detection' in result) {
             displayFace(result.detection.box);
+            displayMask(result.detection.box);
         }
         drawLandmarks(videoEl, $('#overlay').get(0), [result], true)
     }
@@ -217,6 +217,11 @@ function moveTarget() {
         } else if (training.useTwoEyesAndFace) {
             const images = dataset.getImages();
             prediction = training.currentModel.predict([images[0], images[1], images[2]]);
+
+
+        } else if (training.useEyesFaceFacePos) {
+            const images = dataset.getAllInputs();
+            prediction = training.currentModel.predict([images[0], images[1], images[2], images[3]]);
 
 
         } else {

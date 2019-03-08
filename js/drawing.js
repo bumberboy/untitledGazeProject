@@ -51,13 +51,27 @@ function displayFace(faceBox) {
     faceCanvasContext.drawImage(video, faceBox.x, faceBox.y, faceBox.width, faceBox.height,0,0, faceCanvas.width, faceCanvas.height);
 
 }
+function displayMask(faceBox) {
+    const maskCanvas = $('#mask').get(0);
+    const faceCanvasContext = maskCanvas.getContext('2d');
+    // const video = $('#inputVideo').get(0);
+    // faceCanvasContext.drawImage(video, 0, 0, 640, 480,0,0,maskCanvas.width , maskCanvas.height);
+    const xRatio = maskCanvas.width/640;
+    const yRatio = maskCanvas.height/480;
+    faceCanvasContext.clearRect(0 ,0 , maskCanvas.width, maskCanvas.height);
+    faceCanvasContext.fillStyle = '#FFFFFF';
+    faceCanvasContext.fillRect(0 ,0 , maskCanvas.width, maskCanvas.height);
+    faceCanvasContext.fillStyle = '#000000';
+    faceCanvasContext.fillRect(faceBox.x*xRatio, faceBox.y*yRatio, faceBox.width*xRatio, faceBox.height*yRatio);
 
-function displayEye(eyes) {
-    const eyesCanvas = $('#eyes').get(0);
-    const eyesCanvasContext = eyesCanvas.getContext('2d');
-    const video = $('#inputVideo').get(0);
-    eyesCanvasContext.drawImage(video, eyes[0], eyes[1], eyes[2], eyes[3], 0, 0, eyesCanvas.width, eyesCanvas.height);
 }
+
+// function displayEye(eyes) {
+//     const eyesCanvas = $('#eyes').get(0);
+//     const eyesCanvasContext = eyesCanvas.getContext('2d');
+//     const video = $('#inputVideo').get(0);
+//     eyesCanvasContext.drawImage(video, eyes[0], eyes[1], eyes[2], eyes[3], 0, 0, eyesCanvas.width, eyesCanvas.height);
+// }
 
 function displayEyes(leftEye, rightEye) {
     const leftEyeCanvas = $('#leftEye').get(0);
