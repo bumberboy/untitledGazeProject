@@ -1,9 +1,9 @@
 window.dataset = {
-    eyeCanvasWidth: 20,
-    eyeCanvasHeight: 20,
-    faceCanvasWidth: 20,
-    faceCanvasHeight: 20,
-    faceGrid: {width: 20, height: 20},
+    eyeCanvasWidth: 26,
+    eyeCanvasHeight: 26,
+    faceCanvasWidth: 32,
+    faceCanvasHeight: 32,
+    faceGrid: {width: 15, height: 15},
     train: {
         n: 0,
         x: null,
@@ -55,7 +55,7 @@ window.dataset = {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
             const imageB = tf.fromPixels(document.getElementById('rightEye'));
             const imageC = tf.fromPixels(document.getElementById('face'));
-            const imageD = tf.fromPixels(document.getElementById('mask'), numChan);
+            const imageD = tf.fromPixels(document.getElementById('mask'),1);
 
             // Add a batch dimension:
             const batchedImageA = imageA.expandDims(0);
@@ -63,12 +63,11 @@ window.dataset = {
             const batchedImageC = imageC.expandDims(0);
             const batchedImageD = imageD.expandDims(0);
 
-
             // Normalize and return it:
             return [batchedImageA.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                     batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                     batchedImageC.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
-                    batchedImageD.toFloat().div(tf.scalar(127)).sub(tf.scalar(1))];
+                    batchedImageD.toFloat().div(tf.scalar(255))];
         });
     },
 
