@@ -3,6 +3,7 @@ window.dataset = {
     eyeCanvasHeight: 26,
     faceCanvasWidth: 40,
     faceCanvasHeight: 40,
+    faceGrid: {width: 32, height: 24},
     train: {
         n: 0,
         x: null,
@@ -41,10 +42,56 @@ window.dataset = {
             const batchedImageB = imageB.expandDims(0);
             const batchedImageC = imageC.expandDims(0);
 
+
             // Normalize and return it:
             return [batchedImageA.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                 batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                 batchedImageC.toFloat().div(tf.scalar(127)).sub(tf.scalar(1))];
+        });
+    },
+
+    getAllInputs: function() {
+        return tf.tidy(function() {
+            const imageA = tf.fromPixels(document.getElementById('leftEye'));
+            const imageB = tf.fromPixels(document.getElementById('rightEye'));
+            const imageC = tf.fromPixels(document.getElementById('face'));
+            const imageD = tf.tensor([  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                                        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+                                        [24,32],'bool').expandDims(0);
+
+            // Add a batch dimension:
+            const batchedImageA = imageA.expandDims(0);
+            const batchedImageB = imageB.expandDims(0);
+            const batchedImageC = imageC.expandDims(0);
+
+
+            // Normalize and return it:
+            return [batchedImageA.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
+                    batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
+                    batchedImageC.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
+                    imageD];
         });
     },
 
@@ -139,7 +186,10 @@ window.dataset = {
                 set.x = [tf.keep(img[0]), tf.keep(img[1]), tf.keep(metaInfos)];
 
             } else if (training.useTwoEyesAndFace) {
-                set.x = [tf.keep(img[0]), tf.keep(img[1]), tf.keep(img[2]), tf.keep(metaInfos)];
+                set.x = [tf.keep(img[0]), tf.keep(img[1]), tf.keep(img[2])];
+
+            } else if (training.useEyesFaceFacePos) {
+                set.x = [tf.keep(img[0]), tf.keep(img[1]), tf.keep(img[2]), tf.keep(img[3])];
 
             } else {
                 set.x = tf.keep(img);
@@ -180,13 +230,33 @@ window.dataset = {
                 const oldImageC = set.x[2];
                 set.x[2] = tf.keep(oldImageC.concat(img[2], 0));
 
-                const oldMeta = set.x[3];
-                set.x[3] = tf.keep(oldMeta.concat(metaInfos, 0));
+                // const oldMeta = set.x[3];
+                // set.x[3] = tf.keep(oldMeta.concat(metaInfos, 0));
 
                 oldImageA.dispose();
                 oldImageB.dispose();
                 oldImageC.dispose();
-                oldMeta.dispose();
+                // oldMeta.dispose();
+
+            } else if (training.useEyesFaceFacePos) {
+                const oldImageA = set.x[0];
+                set.x[0] = tf.keep(oldImageA.concat(img[0], 0));
+
+                const oldImageB = set.x[1];
+                set.x[1] = tf.keep(oldImageB.concat(img[1], 0));
+
+                const oldImageC = set.x[2];
+                set.x[2] = tf.keep(oldImageC.concat(img[2], 0));
+
+                const oldImageD = set.x[3];
+                console.log(oldImageD);
+                console.log(img[3]);
+                set.x[3] = tf.keep(oldImageC.concat(img[3], 0));
+
+                oldImageA.dispose();
+                oldImageB.dispose();
+                oldImageC.dispose();
+                oldImageD.dispose();
 
             } else {
                 const oldImage = set.x;
@@ -209,19 +279,10 @@ window.dataset = {
 
     addExample: function(img, metaInfos, target) {
         // Given an image, eye pos and target coordinates, adds them to our dataset.
-        // target[0] = target[0] - 0.5;
-        // target[1] = target[1] - 0.5;
         target = tf.tidy(function() {
             return tf.tensor1d(target).expandDims(0);
         });
         const key = dataset.whichDataset();
-
-        // if (training.useTwoEyes) {
-        //     img[0] = dataset.convertImage(img[0]);
-        //     img[1] = dataset.convertImage(img[1]);
-        // } else {
-        //     img = dataset.convertImage(img);
-        // }
 
         dataset.addToDataset(img, metaInfos, target, key);
 
@@ -235,15 +296,24 @@ window.dataset = {
             var img = null;
             if (training.useMetaData) {
                 img = dataset.getImage();
+                const metaInfos = dataset.getMetaInfos();
+                dataset.addExample(img, metaInfos, targetPosition);
+
             } else if (training.useTwoEyes || training.useTwoEyesAndFace) {
                 img = dataset.getImages();
+                const metaInfos = dataset.getMetaInfos();
+                dataset.addExample(img, metaInfos, targetPosition);
+
+            } else if (training.useEyesFaceFacePos) {
+                imgs = dataset.getAllInputs();
+                dataset.addExample(imgs,null,targetPosition);
             } else {
                 img = dataset.getImage();
+                const metaInfos = dataset.getMetaInfos();
+                dataset.addExample(img, metaInfos, targetPosition);
             }
             console.log("Gaze position captured:",targetPosition);
-            const metaInfos = dataset.getMetaInfos();
 
-            dataset.addExample(img, metaInfos, targetPosition);
         });
     },
 

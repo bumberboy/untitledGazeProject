@@ -216,7 +216,7 @@ function moveTarget() {
 
         } else if (training.useTwoEyesAndFace) {
             const images = dataset.getImages();
-            prediction = training.currentModel.predict([images[0], images[1], images[2], metaInfos]);
+            prediction = training.currentModel.predict([images[0], images[1], images[2]]);
 
 
         } else {

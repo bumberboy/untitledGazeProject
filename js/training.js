@@ -1,8 +1,11 @@
 window.training = {
     useMetaData: false,
     useTwoEyes: false,
-    useTwoEyesAndFace: true,
+    useTwoEyesAndFace: false,
+    useEyesFaceFacePos: true,
+    useMultipleModels: false,
     currentModel: null,
+    currentModels:null,
     epochsTrained: 0,
 
     fitModel: function() {
@@ -22,9 +25,14 @@ window.training = {
             } else if (training.useTwoEyes) {
 
             } else if (training.useTwoEyesAndFace) {
-                training.currentModel = training.createModelWithBothEyesMeta();
-
                 training.currentModel = training.createModelBothEyesFace();
+
+            } else if (training.useEyesFaceFacePos) {
+                if (training.useMultipleModels) {
+                    training.currentModels = [training.createModelBothEyesFaceFacePos(),
+                                                training.createModelWithBothEyesMeta()];
+
+                }
 
             } else {
                 training.currentModel = training.createModel();
@@ -46,51 +54,102 @@ window.training = {
             // optimizer: tf.train.adam(0.0005),
             loss: 'meanSquaredError',
         });
+        if (training.useMultipleModels) {
+            for (i = 0; i< training.currentModels.length; i++) {
+                model = training.currentModels[i];
+                model.fit(dataset.train.x, dataset.train.y, {
+                    batchSize: batchSize,
+                    epochs: epochs,
+                    shuffle: true,
+                    validationData: [dataset.val.x, dataset.val.y],
+                    callbacks: {
+                        onEpochEnd: async function(epoch, logs) {
+                            console.info('Epoch', epoch, 'losses:', logs);
+                            training.epochsTrained += 1;
+                            ui.setContent('n-epochs', training.epochsTrained);
+                            ui.setContent('train-loss', logs.loss.toFixed(5));
+                            ui.setContent('val-loss', logs.val_loss.toFixed(5));
 
-        training.currentModel.fit(dataset.train.x, dataset.train.y, {
-            batchSize: batchSize,
-            epochs: epochs,
-            shuffle: true,
-            validationData: [dataset.val.x, dataset.val.y],
-            callbacks: {
-                onEpochEnd: async function(epoch, logs) {
-                    console.info('Epoch', epoch, 'losses:', logs);
-                    training.epochsTrained += 1;
-                    ui.setContent('n-epochs', training.epochsTrained);
-                    ui.setContent('train-loss', logs.loss.toFixed(5));
-                    ui.setContent('val-loss', logs.val_loss.toFixed(5));
+                            if (logs.val_loss < bestValLoss) {
+                                // Save model
+                                bestEpoch = epoch;
+                                bestTrainLoss = logs.loss;
+                                bestValLoss = logs.val_loss;
 
-                    if (logs.val_loss < bestValLoss) {
-                        // Save model
-                        bestEpoch = epoch;
-                        bestTrainLoss = logs.loss;
-                        bestValLoss = logs.val_loss;
+                                // Store best model:
+                                await training.currentModels[i].save(bestModelPath);
+                            }
 
-                        // Store best model:
-                        await training.currentModel.save(bestModelPath);
+                            return await tf.nextFrame();
+                        },
+                        onTrainEnd: async function() {
+                            console.info('Finished training');
+
+                            // Load best model:
+                            training.epochsTrained -= epochs - bestEpoch;
+                            console.info('Loading best epoch:', training.epochsTrained);
+                            ui.setContent('n-epochs', training.epochsTrained);
+                            ui.setContent('train-loss', bestTrainLoss.toFixed(5));
+                            ui.setContent('val-loss', bestValLoss.toFixed(5));
+
+                            training.currentModels[i] = await tf.loadModel(bestModelPath);
+
+                            // $('#start-training').prop('disabled', false);
+                            // $('#start-training').html('Start Training');
+                            // training.inTraining = false;
+                            // ui.onFinishTraining();
+                        }
                     }
-
-                    return await tf.nextFrame();
-                },
-                onTrainEnd: async function() {
-                    console.info('Finished training');
-
-                    // Load best model:
-                    training.epochsTrained -= epochs - bestEpoch;
-                    console.info('Loading best epoch:', training.epochsTrained);
-                    ui.setContent('n-epochs', training.epochsTrained);
-                    ui.setContent('train-loss', bestTrainLoss.toFixed(5));
-                    ui.setContent('val-loss', bestValLoss.toFixed(5));
-
-                    training.currentModel = await tf.loadModel(bestModelPath);
-
-                    // $('#start-training').prop('disabled', false);
-                    // $('#start-training').html('Start Training');
-                    // training.inTraining = false;
-                    // ui.onFinishTraining();
-                }
+                });
             }
-        });
+        } else {
+            training.currentModel.fit(dataset.train.x, dataset.train.y, {
+                batchSize: batchSize,
+                epochs: epochs,
+                shuffle: true,
+                validationData: [dataset.val.x, dataset.val.y],
+                callbacks: {
+                    onEpochEnd: async function(epoch, logs) {
+                        console.info('Epoch', epoch, 'losses:', logs);
+                        training.epochsTrained += 1;
+                        ui.setContent('n-epochs', training.epochsTrained);
+                        ui.setContent('train-loss', logs.loss.toFixed(5));
+                        ui.setContent('val-loss', logs.val_loss.toFixed(5));
+
+                        if (logs.val_loss < bestValLoss) {
+                            // Save model
+                            bestEpoch = epoch;
+                            bestTrainLoss = logs.loss;
+                            bestValLoss = logs.val_loss;
+
+                            // Store best model:
+                            await training.currentModel.save(bestModelPath);
+                        }
+
+                        return await tf.nextFrame();
+                    },
+                    onTrainEnd: async function() {
+                        console.info('Finished training');
+
+                        // Load best model:
+                        training.epochsTrained -= epochs - bestEpoch;
+                        console.info('Loading best epoch:', training.epochsTrained);
+                        ui.setContent('n-epochs', training.epochsTrained);
+                        ui.setContent('train-loss', bestTrainLoss.toFixed(5));
+                        ui.setContent('val-loss', bestValLoss.toFixed(5));
+
+                        training.currentModel = await tf.loadModel(bestModelPath);
+
+                        // $('#start-training').prop('disabled', false);
+                        // $('#start-training').html('Start Training');
+                        // training.inTraining = false;
+                        // ui.onFinishTraining();
+                    }
+                }
+            });
+        }
+
+
     },
 
     createModelWithMeta: function() {
@@ -277,12 +336,8 @@ window.training = {
         const flatC = tf.layers.flatten().apply(maxpoolC);
         const dropoutC = tf.layers.dropout(0.2).apply(flatC);
 
-        const inputMeta = tf.input({
-            name: 'metaInfo',
-            shape: [4],
-        });
 
-        const concat = tf.layers.concatenate().apply([dropoutA, dropoutB, dropoutC, inputMeta]);
+        const concat = tf.layers.concatenate().apply([dropoutA, dropoutB, dropoutC]);
 
         const output = tf.layers.dense({
             units: 2,
@@ -292,9 +347,79 @@ window.training = {
             .apply(concat);
 
         // Create the model based on the inputs
-        return tf.model({inputs: [inputImageA, inputImageB, inputImageC, inputMeta], outputs: output});
+        return tf.model({inputs: [inputImageA, inputImageB, inputImageC], outputs: output});
+
+    },
+
+    createModelBothEyesFaceFacePos: function() {
+        const inputImageA = tf.input({name: 'imageA', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
+        const convA = tf.layers.conv2d({
+            kernelSize: 5,
+            filters: 20,
+            strides: 1,
+            activation: 'relu',
+            kernelInitializer: 'varianceScaling'
+        }).apply(inputImageA);
+        const maxpoolA = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA);
+        const flatA = tf.layers.flatten().apply(maxpoolA);
+        const dropoutA = tf.layers.dropout(0.2).apply(flatA);
+
+
+        const inputImageB = tf.input({name: 'imageB', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
+        const convB = tf.layers.conv2d({
+            kernelSize: 5,
+            filters: 20,
+            strides: 1,
+            activation: 'relu',
+            kernelInitializer: 'varianceScaling'
+        }).apply(inputImageB);
+        const maxpoolB = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB);
+        const flatB = tf.layers.flatten().apply(maxpoolB);
+        const dropoutB = tf.layers.dropout(0.2).apply(flatB);
+
+        const inputImageC = tf.input({name: 'imageC', shape: [dataset.faceCanvasHeight, dataset.faceCanvasWidth, 3],});
+        const convC = tf.layers.conv2d({
+            kernelSize: 5,
+            filters: 20,
+            strides: 1,
+            activation: 'relu',
+            kernelInitializer: 'varianceScaling'
+        }).apply(inputImageC);
+        const maxpoolC = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convC);
+        const flatC = tf.layers.flatten().apply(maxpoolC);
+        const dropoutC = tf.layers.dropout(0.2).apply(flatC);
+
+        const inputFaceGrid = tf.input({name: 'face', shape:[dataset.faceGrid.height, dataset.faceGrid.width, 1],});
+        const convFaceGrid = tf.layers.conv2d({
+            kernelSize: 4,
+            filters:10,
+            strides:1,
+            activation: 'relu',
+            kernelInitializer: 'varianceScaling'
+        }).apply(inputFaceGrid);
+        const flatFaceGrid = tf.layers.flatten().apply(convFaceGrid);
+        const dropoutFaceGrid = tf.layers.dropout(0.2).apply(flatFaceGrid);
+
+        const concat1 = tf.layers.concatenate().apply([dropoutA, dropoutB]);
+
+        const output1 = tf.layers.dense({
+            units: 2,
+            activation: 'tanh',
+            kernelInitializer: 'varianceScaling',
+        }).apply(concat1);
+
+        const concat2 = tf.layers.concatenate().apply([output1, dropoutC, dropoutFaceGrid]);
+        const output2 = tf.layers.dense({
+            units: 2,
+            activation: 'tanh',
+            kernelInitializer: 'varianceScaling',
+        }).apply(concat2);
+
+
+
+        // Create the model based on the inputs
+        return tf.model({inputs: [inputImageA, inputImageB, inputImageC, inputFaceGrid], outputs: output2});
 
     }
-
 
 }
