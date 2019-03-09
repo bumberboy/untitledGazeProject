@@ -170,13 +170,23 @@ function convertImage(image) {
     return tf.tensor(data);
 }
 
+async function useTrainedModel() {
+    console.log(tf.version);
+    const model = await tf.loadModel('/untitledGazeProject/model.json');
+    training.currentModel = model
+}
+
 
 function setupKeys() {
     $('body').keyup(function(event) {
         // On space key:
         if (event.key === ' ') {
+            if (dataset.useOnlineModel) {
+                dataset.captureExample(mouse.getMousePos());
 
-            dataset.captureExample(mouse.getMousePos());
+            } else {
+                dataset.downloadExample(mouse.getMousePos());
+            }
 
             event.preventDefault();
             return false;
@@ -186,6 +196,8 @@ function setupKeys() {
             targetTraining.stopTargetTraining();
         } else if (event.key === 'f') {
             targetTraining.runTargetTraining('circle');
+        } else if (event.key === 'p') {
+            useTrainedModel();
         }
     });
 

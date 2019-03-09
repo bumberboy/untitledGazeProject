@@ -1,8 +1,9 @@
 window.training = {
     useMetaData: false,
     useTwoEyes: false,
-    useTwoEyesAndFace: true,
-    useEyesFaceFacePos: false,
+    useOnlineModel: true,
+    useTwoEyesAndFace: false,
+    useEyesFaceFacePos: true,
     useMultipleModels: false,
     currentModel: null,
     currentModels:null,

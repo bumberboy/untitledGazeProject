@@ -1,4 +1,5 @@
 window.dataset = {
+    // counter:0,
     eyeCanvasWidth: 26,
     eyeCanvasHeight: 26,
     faceCanvasWidth: 32,
@@ -55,7 +56,7 @@ window.dataset = {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
             const imageB = tf.fromPixels(document.getElementById('rightEye'));
             const imageC = tf.fromPixels(document.getElementById('face'));
-            const imageD = tf.fromPixels(document.getElementById('mask'),1);
+            const imageD = tf.fromPixels(document.getElementById('mask'));
 
             // Add a batch dimension:
             const batchedImageA = imageA.expandDims(0);
@@ -67,7 +68,7 @@ window.dataset = {
             return [batchedImageA.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                     batchedImageB.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
                     batchedImageC.toFloat().div(tf.scalar(127)).sub(tf.scalar(1)),
-                    batchedImageD.toFloat().div(tf.scalar(255))];
+                    batchedImageD.toFloat().div(tf.scalar(127)).sub(tf.scalar(1))];
         });
     },
 
@@ -250,6 +251,41 @@ window.dataset = {
         }
 
         set.n += 1;
+    },
+
+    downloadExample: function(targetPosition) {
+        const faceCanvas = $('#face').get(0);
+        const leftEyeCanvas = $('#leftEye').get(0);
+        const rightEyeCanvas = $('#rightEye').get(0);
+        const maskCanvas = $('#mask').get(0);
+
+
+        // try {
+        //     localStorage.setItem(dataset.counter, faceCanvas.toDataURL('image/jpeg'));
+        //     localStorage.setItem(dataset.counter, leftEyeCanvas.toDataURL('image/jpeg'));
+        //     localStorage.setItem(dataset.counter, rightEyeCanvas.toDataURL('image/jpeg'));
+        // } catch (e) {
+        //     console.log("Storage failed: " + e);
+        //
+        // }
+        saveAs(faceCanvas.toDataURL('image/jpeg'),"face.jpg");
+        saveAs(leftEyeCanvas.toDataURL('image/jpeg'),"leftEye.jpg");
+        saveAs(rightEyeCanvas.toDataURL('image/jpeg'),"rightEye.jpg");
+        saveAs(maskCanvas.toDataURL('image/jpeg'),"mask.jpg");
+        var blob = new Blob([targetPosition], {type: "text/plain;charset=utf-8"});
+        saveAs(blob,"target.txt");
+
+
+        // var zip = new JSZip();
+        // var imageFolder = zip.folder("images");
+        // imageFolder.file("h.jpg", faceCanvas.toDataURL('image/jpeg'),);
+        // zip.generateAsync({type:"blob"})
+        //     .then(function(content) {
+        //         // see FileSaver.js
+        //         saveAs(content, "example.zip");
+        //     });
+
+        // dataset.counter += 1;
     },
 
     addExample: function(img, metaInfos, target) {
