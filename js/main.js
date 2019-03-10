@@ -170,9 +170,9 @@ function convertImage(image) {
     return tf.tensor(data);
 }
 
-async function useTrainedModel() {
+async function useTrainedModel(modelName) {
     console.log(tf.version);
-    const model = await tf.loadModel('/untitledGazeProject/model.json');
+    const model = await tf.loadModel('/untitledGazeProject/'+modelName+'.json');
     training.currentModel = model
 }
 
@@ -192,7 +192,9 @@ function setupKeys() {
         } else if (event.key === 'f') {
             targetTraining.runTargetTraining('circle');
         } else if (event.key === 'p') {
-            useTrainedModel();
+            useTrainedModel('model');
+        } else if (event.key === 'o') {
+            useTrainedModel('model2');
         }
     });
 
