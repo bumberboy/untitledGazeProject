@@ -1,5 +1,5 @@
 window.dataset = {
-    // counter:0,
+    counter:0,
     eyeCanvasWidth: 26,
     eyeCanvasHeight: 26,
     faceCanvasWidth: 32,
@@ -32,6 +32,7 @@ window.dataset = {
     },
 
     getImages: function() {
+        console.log('hello2');
         // Capture the current image in the eyes canvas as a tensor.
         return tf.tidy(function() {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
@@ -52,6 +53,8 @@ window.dataset = {
     },
 
     getAllInputs: function() {
+        console.log('nonono');
+
         return tf.tidy(function() {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
             const imageB = tf.fromPixels(document.getElementById('rightEye'));
@@ -198,6 +201,7 @@ window.dataset = {
                 oldMeta.dispose();
 
             } else if (training.useTwoEyesAndFace) {
+                console.log('hello')
                 const oldImageA = set.x[0];
                 set.x[0] = tf.keep(oldImageA.concat(img[0], 0));
 
@@ -268,24 +272,15 @@ window.dataset = {
         //     console.log("Storage failed: " + e);
         //
         // }
-        saveAs(faceCanvas.toDataURL('image/jpeg'),"face.jpg");
-        saveAs(leftEyeCanvas.toDataURL('image/jpeg'),"leftEye.jpg");
-        saveAs(rightEyeCanvas.toDataURL('image/jpeg'),"rightEye.jpg");
-        saveAs(maskCanvas.toDataURL('image/jpeg'),"mask.jpg");
+        dataset.counter += 1;
+        saveAs(faceCanvas.toDataURL('image/jpeg'),"face"+dataset.counter+".jpg");
+        saveAs(leftEyeCanvas.toDataURL('image/jpeg'),"leftEye"+dataset.counter+".jpg");
+        saveAs(rightEyeCanvas.toDataURL('image/jpeg'),"rightEye"+dataset.counter+".jpg");
+        saveAs(maskCanvas.toDataURL('image/jpeg'),"mask"+dataset.counter+".jpg");
         var blob = new Blob([targetPosition], {type: "text/plain;charset=utf-8"});
-        saveAs(blob,"target.txt");
+        saveAs(blob,"target"+dataset.counter+".txt");
+        ui.setContent('n-downloaded', dataset.counter);
 
-
-        // var zip = new JSZip();
-        // var imageFolder = zip.folder("images");
-        // imageFolder.file("h.jpg", faceCanvas.toDataURL('image/jpeg'),);
-        // zip.generateAsync({type:"blob"})
-        //     .then(function(content) {
-        //         // see FileSaver.js
-        //         saveAs(content, "example.zip");
-        //     });
-
-        // dataset.counter += 1;
     },
 
     addExample: function(img, metaInfos, target) {
@@ -302,30 +297,35 @@ window.dataset = {
 
     captureExample: function(targetPosition) {
         // Take the latest image from the eyes canvas and add it to our dataset along with the supposed gaze position.
+        if (training.useOnlineModel) {
+            tf.tidy(function() {
+                var img = null;
+                if (training.useMetaData) {
+                    img = dataset.getImage();
+                    const metaInfos = dataset.getMetaInfos();
+                    dataset.addExample(img, metaInfos, targetPosition);
 
-        tf.tidy(function() {
-            var img = null;
-            if (training.useMetaData) {
-                img = dataset.getImage();
-                const metaInfos = dataset.getMetaInfos();
-                dataset.addExample(img, metaInfos, targetPosition);
+                } else if (training.useTwoEyes || training.useTwoEyesAndFace) {
+                    img = dataset.getImages();
+                    const metaInfos = dataset.getMetaInfos();
+                    dataset.addExample(img, metaInfos, targetPosition);
 
-            } else if (training.useTwoEyes || training.useTwoEyesAndFace) {
-                img = dataset.getImages();
-                const metaInfos = dataset.getMetaInfos();
-                dataset.addExample(img, metaInfos, targetPosition);
+                } else if (training.useEyesFaceFacePos) {
+                    imgs = dataset.getAllInputs();
+                    dataset.addExample(imgs,null,targetPosition);
+                } else {
+                    img = dataset.getImage();
+                    const metaInfos = dataset.getMetaInfos();
+                    dataset.addExample(img, metaInfos, targetPosition);
+                }
+                console.log("Gaze position captured:",targetPosition);
 
-            } else if (training.useEyesFaceFacePos) {
-                imgs = dataset.getAllInputs();
-                dataset.addExample(imgs,null,targetPosition);
-            } else {
-                img = dataset.getImage();
-                const metaInfos = dataset.getMetaInfos();
-                dataset.addExample(img, metaInfos, targetPosition);
-            }
-            console.log("Gaze position captured:",targetPosition);
+            });
+        } else {
+            dataset.downloadExample(targetPosition);
 
-        });
+        }
+
     },
 
 };

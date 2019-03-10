@@ -1,7 +1,7 @@
 window.training = {
     useMetaData: false,
     useTwoEyes: false,
-    useOnlineModel: true,
+    useOnlineModel: false,
     useTwoEyesAndFace: false,
     useEyesFaceFacePos: true,
     useMultipleModels: false,
@@ -50,100 +50,51 @@ window.training = {
             // optimizer: tf.train.adam(0.0005),
             loss: 'meanSquaredError',
         });
-        if (training.useMultipleModels) {
-            for (i = 0; i< training.currentModels.length; i++) {
-                model = training.currentModels[i];
-                model.fit(dataset.train.x, dataset.train.y, {
-                    batchSize: batchSize,
-                    epochs: epochs,
-                    shuffle: true,
-                    validationData: [dataset.val.x, dataset.val.y],
-                    callbacks: {
-                        onEpochEnd: async function(epoch, logs) {
-                            console.info('Epoch', epoch, 'losses:', logs);
-                            training.epochsTrained += 1;
-                            ui.setContent('n-epochs', training.epochsTrained);
-                            ui.setContent('train-loss', logs.loss.toFixed(5));
-                            ui.setContent('val-loss', logs.val_loss.toFixed(5));
 
-                            if (logs.val_loss < bestValLoss) {
-                                // Save model
-                                bestEpoch = epoch;
-                                bestTrainLoss = logs.loss;
-                                bestValLoss = logs.val_loss;
+        training.currentModel.fit(dataset.train.x, dataset.train.y, {
+            batchSize: batchSize,
+            epochs: epochs,
+            shuffle: true,
+            validationData: [dataset.val.x, dataset.val.y],
+            callbacks: {
+                onEpochEnd: async function(epoch, logs) {
+                    console.info('Epoch', epoch, 'losses:', logs);
+                    training.epochsTrained += 1;
+                    ui.setContent('n-epochs', training.epochsTrained);
+                    ui.setContent('train-loss', logs.loss.toFixed(5));
+                    ui.setContent('val-loss', logs.val_loss.toFixed(5));
 
-                                // Store best model:
-                                await training.currentModels[i].save(bestModelPath);
-                            }
+                    if (logs.val_loss < bestValLoss) {
+                        // Save model
+                        bestEpoch = epoch;
+                        bestTrainLoss = logs.loss;
+                        bestValLoss = logs.val_loss;
 
-                            return await tf.nextFrame();
-                        },
-                        onTrainEnd: async function() {
-                            console.info('Finished training');
-
-                            // Load best model:
-                            training.epochsTrained -= epochs - bestEpoch;
-                            console.info('Loading best epoch:', training.epochsTrained);
-                            ui.setContent('n-epochs', training.epochsTrained);
-                            ui.setContent('train-loss', bestTrainLoss.toFixed(5));
-                            ui.setContent('val-loss', bestValLoss.toFixed(5));
-
-                            training.currentModels[i] = await tf.loadModel(bestModelPath);
-
-                            // $('#start-training').prop('disabled', false);
-                            // $('#start-training').html('Start Training');
-                            // training.inTraining = false;
-                            // ui.onFinishTraining();
-                        }
+                        // Store best model:
+                        await training.currentModel.save(bestModelPath);
                     }
-                });
-            }
-        } else {
-            training.currentModel.fit(dataset.train.x, dataset.train.y, {
-                batchSize: batchSize,
-                epochs: epochs,
-                shuffle: true,
-                validationData: [dataset.val.x, dataset.val.y],
-                callbacks: {
-                    onEpochEnd: async function(epoch, logs) {
-                        console.info('Epoch', epoch, 'losses:', logs);
-                        training.epochsTrained += 1;
-                        ui.setContent('n-epochs', training.epochsTrained);
-                        ui.setContent('train-loss', logs.loss.toFixed(5));
-                        ui.setContent('val-loss', logs.val_loss.toFixed(5));
 
-                        if (logs.val_loss < bestValLoss) {
-                            // Save model
-                            bestEpoch = epoch;
-                            bestTrainLoss = logs.loss;
-                            bestValLoss = logs.val_loss;
+                    return await tf.nextFrame();
+                },
+                onTrainEnd: async function() {
+                    console.info('Finished training');
 
-                            // Store best model:
-                            await training.currentModel.save(bestModelPath);
-                        }
+                    // Load best model:
+                    training.epochsTrained -= epochs - bestEpoch;
+                    console.info('Loading best epoch:', training.epochsTrained);
+                    ui.setContent('n-epochs', training.epochsTrained);
+                    ui.setContent('train-loss', bestTrainLoss.toFixed(5));
+                    ui.setContent('val-loss', bestValLoss.toFixed(5));
 
-                        return await tf.nextFrame();
-                    },
-                    onTrainEnd: async function() {
-                        console.info('Finished training');
+                    training.currentModel = await tf.loadModel(bestModelPath);
 
-                        // Load best model:
-                        training.epochsTrained -= epochs - bestEpoch;
-                        console.info('Loading best epoch:', training.epochsTrained);
-                        ui.setContent('n-epochs', training.epochsTrained);
-                        ui.setContent('train-loss', bestTrainLoss.toFixed(5));
-                        ui.setContent('val-loss', bestValLoss.toFixed(5));
-
-                        training.currentModel = await tf.loadModel(bestModelPath);
-
-                        // $('#start-training').prop('disabled', false);
-                        // $('#start-training').html('Start Training');
-                        // training.inTraining = false;
-                        // ui.onFinishTraining();
-                    }
+                    // $('#start-training').prop('disabled', false);
+                    // $('#start-training').html('Start Training');
+                    // training.inTraining = false;
+                    // ui.onFinishTraining();
                 }
-            });
-        }
+            }
+        });
 
 
     },
@@ -296,51 +247,37 @@ window.training = {
 
     createModelBothEyesFace: function() {
         const inputImageA = tf.input({name: 'imageA', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
-        const convA = tf.layers.conv2d({
-            kernelSize: 5,
-            filters: 20,
-            strides: 1,
-            activation: 'relu',
-            kernelInitializer: 'varianceScaling'
-        }).apply(inputImageA);
+        const convA = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageA);
         const maxpoolA = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA);
-        const flatA = tf.layers.flatten().apply(maxpoolA);
-        const dropoutA = tf.layers.dropout(0.2).apply(flatA);
+        const convA2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolA);
+        const maxpoolA2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA2);
+        const flatA2 = tf.layers.flatten().apply(maxpoolA2);
+        const dropoutA2 = tf.layers.dropout(0.2).apply(flatA2);
 
 
         const inputImageB = tf.input({name: 'imageB', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
-        const convB = tf.layers.conv2d({
-            kernelSize: 5,
-            filters: 20,
-            strides: 1,
-            activation: 'relu',
-            kernelInitializer: 'varianceScaling'
-        }).apply(inputImageB);
+        const convB = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageB);
         const maxpoolB = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB);
-        const flatB = tf.layers.flatten().apply(maxpoolB);
-        const dropoutB = tf.layers.dropout(0.2).apply(flatB);
+        const convB2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolB);
+        const maxpoolB2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB2);
+        const flatB2 = tf.layers.flatten().apply(maxpoolB2);
+        const dropoutB2 = tf.layers.dropout(0.2).apply(flatB2);
 
         const inputImageC = tf.input({name: 'imageC', shape: [dataset.faceCanvasHeight, dataset.faceCanvasWidth, 3],});
-        const convC = tf.layers.conv2d({
-            kernelSize: 5,
-            filters: 20,
-            strides: 1,
-            activation: 'relu',
-            kernelInitializer: 'varianceScaling'
-        }).apply(inputImageC);
+        const convC = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageC);
         const maxpoolC = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convC);
-        const flatC = tf.layers.flatten().apply(maxpoolC);
-        const dropoutC = tf.layers.dropout(0.2).apply(flatC);
+        const convC2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolC);
+        const maxpoolC2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convC2);
+        const flatC2 = tf.layers.flatten().apply(maxpoolC2);
+        const dropoutC2 = tf.layers.dropout(0.2).apply(flatC2);
 
 
-        const concat = tf.layers.concatenate().apply([dropoutA, dropoutB, dropoutC]);
+        const concat = tf.layers.concatenate().apply([dropoutA2, dropoutB2]);
 
-        const output = tf.layers.dense({
-            units: 2,
-            activation: 'tanh',
-            kernelInitializer: 'varianceScaling',
-        })
-            .apply(concat);
+        const dense1 = tf.layers.dense({units: 2, activation: 'tanh', kernelInitializer: 'varianceScaling',}).apply(concat);
+        const concat2 = tf.layers.concatenate().apply([dense1, dropoutC2]);
+
+        const output = tf.layers.dense({units: 2, activation: 'tanh', kernelInitializer: 'varianceScaling',}).apply(concat2);
 
         // Create the model based on the inputs
         return tf.model({inputs: [inputImageA, inputImageB, inputImageC], outputs: output});
@@ -373,7 +310,7 @@ window.training = {
         const flatC2 = tf.layers.flatten().apply(maxpoolC2);
         const dropoutC2 = tf.layers.dropout(0.2).apply(flatC2);
 
-        const inputFaceGrid = tf.input({name: 'faceGrid', shape:[dataset.faceGrid.height, dataset.faceGrid.width, 1],});
+        const inputFaceGrid = tf.input({name: 'faceGrid', shape:[dataset.faceGrid.height, dataset.faceGrid.width, 3],});
         const convFaceGrid = tf.layers.conv2d({kernelSize: 5, filters:10, strides:1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputFaceGrid);
         const maxpoolFaceGrid = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convFaceGrid);
         const convFaceGrid2 = tf.layers.conv2d({kernelSize: 5, filters:10, strides:1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolFaceGrid);

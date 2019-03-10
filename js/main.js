@@ -181,12 +181,7 @@ function setupKeys() {
     $('body').keyup(function(event) {
         // On space key:
         if (event.key === ' ') {
-            if (dataset.useOnlineModel) {
-                dataset.captureExample(mouse.getMousePos());
-
-            } else {
-                dataset.downloadExample(mouse.getMousePos());
-            }
+            dataset.captureExample(mouse.getMousePos());
 
             event.preventDefault();
             return false;
@@ -247,9 +242,12 @@ function moveTarget() {
         const target = $('#target');
         const targetWidth = target.outerWidth();
         const targetHeight = target.outerHeight();
-        // console.log(prediction.get(0,0), prediction.get(0,1));
-        const x = (prediction.get(0, 0) + 1) / 2 * ($(window).width() - targetWidth);
-        const y = (prediction.get(0, 1) + 1) / 2 * ($(window).height() - targetHeight);
+        console.log(prediction.get(0,0), prediction.get(0,1));
+        const xx = Math.min(((prediction.get(0, 0) + 1) / 2), 1);
+        const yy = Math.min(((prediction.get(0, 1) + 1) / 2), 1);
+
+        const x = xx * ($(window).width() - targetWidth);
+        const y = yy * ($(window).height() - targetHeight);
 
         // Move target there:
         target.css('left', x + 'px');
@@ -265,7 +263,7 @@ function drawHeatmap() {
     heatmap = h337.create({
         container: document.getElementById('heatmapContainer'),
         maxOpacity: .6,
-        radius: 100,
+        radius: 40,
         blur: .950,
         // backgroundColor with alpha so you can see through it
     });
