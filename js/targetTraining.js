@@ -3,9 +3,17 @@ window.targetTraining = {
     y:0,
     trainingTargetTimer: null,
     captureTimer: null,
+    gridIsRunning: false,
+    gridAnim:null,
 
     getTargetPos: function() {
         return [targetTraining.x, targetTraining.y];
+    },
+
+    captureExample: function() {
+        // console.log(targetTraining.getTargetPos());
+
+        dataset.captureExample(targetTraining.getTargetPos());
     },
 
     runTargetTraining: function(type) {
@@ -14,17 +22,10 @@ window.targetTraining = {
 
         } else if (type === 'circle') {
             targetTraining.displayCircularTrainingTarget();
+        } else if (type === 'grid') {
+            targetTraining.displayGridTargetTraining();
+
         }
-
-
-
-        function captureExample() {
-            // console.log(targetTraining.getTargetPos());
-            // console.log(mouse.getMousePos());
-            dataset.captureExample(targetTraining.getTargetPos());
-        }
-
-        targetTraining.captureTimer = setInterval(captureExample,200);
 
 
     },
@@ -79,8 +80,8 @@ window.targetTraining = {
         function drawRect() {
             ball.style.left = absoluteX + 'px';
             ball.style.top = absoluteY + 'px';
-            targetTraining.x = (absoluteX/(window.innerWidth - 50)*2 - 1);
-            targetTraining.y = (absoluteY/(window.innerHeight - 50)*2 - 1);
+            targetTraining.x = (absoluteX/(w)*2 - 1);
+            targetTraining.y = (absoluteY/(h)*2 - 1);
 
             if (firstHalfDone === false) {
                 if (absoluteX < w) {
@@ -119,9 +120,44 @@ window.targetTraining = {
         trainingTimer = setInterval(drawRect, 5);
 
 
+    },
 
+    displayGridTargetTraining: function() {
+        var w = window.innerWidth - 35;
+        var h = window.innerHeight - 35;
+        targetTraining.gridAnim = anime({
+            targets: '#ball',
+            keyframes: [
+                {translateX: w, duration: 10000},
+                {translateY: h, duration: 7000},
+                {translateX: 0, duration: 10000},
+                {translateY: 200, duration: 6000},
+                {translateX: w - 200, duration: 8000},
+                {translateY: h - 200, duration: 6000},
+                {translateX: 200, duration: 8000},
+                {translateY: 400, duration: 5000},
+                {translateX: w - 400, duration: 7000},
+                {translateY: h - 400, duration: 4000},
+                {translateX: 400, duration: 7000},
+                {translateY: 600, duration: 3000},
+            ],
+            easing: 'linear',
+            loop: false,
+            begin: function(anim) {
+                targetTraining.captureTimer = setInterval(targetTraining.captureExample,150);
+            },
+            update: function(anim) {
+                const translation = anim.animatables[0].transforms.list;
+                absoluteX = parseFloat(translation.get("translateX"));
+                absoluteY = parseFloat(translation.get("translateY"));
+                targetTraining.x = (absoluteX/(w)*2 - 1);
+                targetTraining.y = (absoluteY/(h)*2 - 1);
 
-
+            },
+            complete: function(anim) {
+                clearInterval(targetTraining.captureTimer);
+            }
+        });
 
     }
 

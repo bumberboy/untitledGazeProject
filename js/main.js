@@ -191,6 +191,13 @@ function setupKeys() {
             targetTraining.stopTargetTraining();
         } else if (event.key === 'f') {
             targetTraining.runTargetTraining('circle');
+        } else if (event.key === 'b') {
+            if (targetTraining.gridAnim == null) {
+                targetTraining.runTargetTraining('grid');
+            } else {
+                targetTraining.gridAnim.pause();
+            }
+
         } else if (event.key === 'p') {
             useTrainedModel('model');
         } else if (event.key === 'o') {

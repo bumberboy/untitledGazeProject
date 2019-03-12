@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="styles.css">
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.14.1/dist/tf.min.js"></script>
+    <script src="js/anime.min.js"></script>
     <script src="face-api.js"></script>
     <script src="js/faceDetectionControls.js"></script>
     <script src="js/drawing.js"></script>
@@ -26,6 +27,26 @@
 </head>
 <body>
 
+
+
+
+<div style="position: relative" class="margin">
+    <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
+    <canvas id="overlay"></canvas>
+    <!--<canvas id="eyes" width="25" height="25"></canvas>-->
+    <canvas id="leftEye" width="30" height="30"></canvas>
+    <canvas id="rightEye" width="30" height="30"></canvas>
+    <!--<canvas id="eyesRotated" width="60" height="60"></canvas>-->
+    <canvas id = "face" width="40" height="40"></canvas>
+    <canvas id = "mask" width="15" height="15"></canvas>
+
+</div>
+
+<div id="heatmapContainerWrapper"><div id="heatmapContainer"></div></div>
+
+
+
+<button id="train">Train!</button>
 
 <div id="training">
     <table>
@@ -56,28 +77,9 @@
     </table>
 </div>
 
-<div style="position: relative" class="margin">
-    <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
-    <canvas id="overlay"></canvas>
-    <!--<canvas id="eyes" width="25" height="25"></canvas>-->
-    <canvas id="leftEye" width="30" height="30"></canvas>
-    <canvas id="rightEye" width="30" height="30"></canvas>
-    <!--<canvas id="eyesRotated" width="60" height="60"></canvas>-->
-    <canvas id = "face" width="40" height="40"></canvas>
-    <canvas id = "mask" width="15" height="15"></canvas>
-
-
-
-</div>
-
-<div id="heatmapContainerWrapper"><div id="heatmapContainer"></div></div>
-
-
-<div id="ball"></div>
-
-<button id="train">Train!</button>
-
 <div id="target"></div>
+<canvas id="grid"></canvas>
+<div id="ball"></div>
 
 
 
