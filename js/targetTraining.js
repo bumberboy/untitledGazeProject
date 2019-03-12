@@ -24,7 +24,7 @@ window.targetTraining = {
             dataset.captureExample(targetTraining.getTargetPos());
         }
 
-        targetTraining.captureTimer = setInterval(captureExample,100);
+        targetTraining.captureTimer = setInterval(captureExample,200);
 
 
     },
@@ -51,7 +51,7 @@ window.targetTraining = {
             ball.style.left = absoluteX + 'px';
             ball.style.top = absoluteY + 'px';
 
-            angle = angle + 0.2;
+            angle = angle + 0.3;
             if (angle > 360) {
                 angle = 0;
             }

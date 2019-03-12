@@ -1,9 +1,9 @@
 window.training = {
     useMetaData: false,
     useTwoEyes: false,
-    useOnlineModel: false,
-    useTwoEyesAndFace: false,
-    useEyesFaceFacePos: true,
+    useOnlineModel: true,
+    useTwoEyesAndFace: true,
+    useEyesFaceFacePos: false,
     useMultipleModels: false,
     currentModel: null,
     currentModels:null,
@@ -26,6 +26,7 @@ window.training = {
             } else if (training.useTwoEyes) {
 
             } else if (training.useTwoEyesAndFace) {
+                console.log("Training 2 eyes and face model")
                 training.currentModel = training.createModelBothEyesFace();
 
             } else if (training.useEyesFaceFacePos) {
@@ -45,7 +46,7 @@ window.training = {
 
 
         training.currentModel.compile({
-            optimizer: tf.train.sgd(0.15),
+            optimizer: tf.train.sgd(0.1),
 
             // optimizer: tf.train.adam(0.0005),
             loss: 'meanSquaredError',
@@ -247,37 +248,37 @@ window.training = {
 
     createModelBothEyesFace: function() {
         const inputImageA = tf.input({name: 'imageA', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
-        const convA = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageA);
+        const convA = tf.layers.conv2d({kernelSize: 5, filters: 20, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageA);
         const maxpoolA = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA);
-        const convA2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolA);
-        const maxpoolA2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA2);
-        const flatA2 = tf.layers.flatten().apply(maxpoolA2);
+        // const convA2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolA);
+        // const maxpoolA2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convA2);
+        const flatA2 = tf.layers.flatten().apply(maxpoolA);
         const dropoutA2 = tf.layers.dropout(0.2).apply(flatA2);
 
 
         const inputImageB = tf.input({name: 'imageB', shape: [dataset.eyeCanvasHeight, dataset.eyeCanvasWidth, 3],});
-        const convB = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageB);
+        const convB = tf.layers.conv2d({kernelSize: 5, filters: 20, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageB);
         const maxpoolB = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB);
-        const convB2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolB);
-        const maxpoolB2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB2);
-        const flatB2 = tf.layers.flatten().apply(maxpoolB2);
+        // const convB2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolB);
+        // const maxpoolB2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convB2);
+        const flatB2 = tf.layers.flatten().apply(maxpoolB);
         const dropoutB2 = tf.layers.dropout(0.2).apply(flatB2);
 
         const inputImageC = tf.input({name: 'imageC', shape: [dataset.faceCanvasHeight, dataset.faceCanvasWidth, 3],});
-        const convC = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageC);
+        const convC = tf.layers.conv2d({kernelSize: 5, filters: 20, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(inputImageC);
         const maxpoolC = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convC);
-        const convC2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolC);
-        const maxpoolC2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convC2);
-        const flatC2 = tf.layers.flatten().apply(maxpoolC2);
+        // const convC2 = tf.layers.conv2d({kernelSize: 5, filters: 10, strides: 1, activation: 'relu', kernelInitializer: 'varianceScaling'}).apply(maxpoolC);
+        // const maxpoolC2 = tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2],}).apply(convC2);
+        const flatC2 = tf.layers.flatten().apply(maxpoolC);
         const dropoutC2 = tf.layers.dropout(0.2).apply(flatC2);
 
 
-        const concat = tf.layers.concatenate().apply([dropoutA2, dropoutB2]);
+        const concat = tf.layers.concatenate().apply([dropoutA2, dropoutB2, dropoutC2]);
 
-        const dense1 = tf.layers.dense({units: 2, activation: 'tanh', kernelInitializer: 'varianceScaling',}).apply(concat);
-        const concat2 = tf.layers.concatenate().apply([dense1, dropoutC2]);
-
-        const output = tf.layers.dense({units: 2, activation: 'tanh', kernelInitializer: 'varianceScaling',}).apply(concat2);
+        const output = tf.layers.dense({units: 2, activation: 'tanh', kernelInitializer: 'varianceScaling',}).apply(concat);
+        // const concat2 = tf.layers.concatenate().apply([dense1, dropoutC2]);
+        //
+        // const output = tf.layers.dense({units: 2, activation: 'relu', kernelInitializer: 'varianceScaling',}).apply(concat2);
 
         // Create the model based on the inputs
         return tf.model({inputs: [inputImageA, inputImageB, inputImageC], outputs: output});

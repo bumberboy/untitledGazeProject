@@ -1,9 +1,9 @@
 window.dataset = {
-    counter:0,
-    eyeCanvasWidth: 26,
-    eyeCanvasHeight: 26,
-    faceCanvasWidth: 32,
-    faceCanvasHeight: 32,
+    counter:1500,
+    eyeCanvasWidth: 30,
+    eyeCanvasHeight: 30,
+    faceCanvasWidth: 40,
+    faceCanvasHeight: 40,
     faceGrid: {width: 15, height: 15},
     train: {
         n: 0,
