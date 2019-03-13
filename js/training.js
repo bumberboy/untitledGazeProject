@@ -12,7 +12,7 @@ window.training = {
     epochsTrained: 0,
 
     fitModel: function() {
-        const epochs = 10;
+        const epochs = 20;
 
         let batchSize = Math.floor(dataset.train.n * 0.1);
         if (batchSize < 4) {
@@ -48,9 +48,9 @@ window.training = {
 
 
         training.currentModel.compile({
-            optimizer: tf.train.sgd(0.1),
+            // optimizer: 'sgd',
 
-            // optimizer: tf.train.adam(0.0005),
+            optimizer: tf.train.adam(0.0005),
             loss: 'meanSquaredError',
         });
 

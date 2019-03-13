@@ -128,23 +128,23 @@ window.targetTraining = {
         targetTraining.gridAnim = anime({
             targets: '#ball',
             keyframes: [
-                {translateX: w, duration: 10000},
-                {translateY: h, duration: 7000},
-                {translateX: 0, duration: 10000},
-                {translateY: 200, duration: 6000},
-                {translateX: w - 200, duration: 8000},
-                {translateY: h - 200, duration: 6000},
-                {translateX: 200, duration: 8000},
-                {translateY: 400, duration: 5000},
-                {translateX: w - 400, duration: 7000},
-                {translateY: h - 400, duration: 4000},
-                {translateX: 400, duration: 7000},
-                {translateY: 600, duration: 3000},
+                {translateX: w, duration: 6000},
+                {translateY: h, duration: 6000},
+                {translateX: 0, duration: 6000},
+                {translateY: 200, duration: 5000},
+                {translateX: w - 200, duration: 6000},
+                {translateY: h - 200, duration: 5000},
+                {translateX: 200, duration: 6000},
+                {translateY: 400, duration: 4000},
+                {translateX: w - 400, duration: 5000},
+                {translateY: h - 400, duration: 3000},
+                {translateX: 400, duration: 5000},
+                {translateY: 600, duration: 2000},
             ],
             easing: 'linear',
             loop: false,
             begin: function(anim) {
-                targetTraining.captureTimer = setInterval(targetTraining.captureExample,150);
+                targetTraining.captureTimer = setInterval(targetTraining.captureExample,100);
             },
             update: function(anim) {
                 const translation = anim.animatables[0].transforms.list;
@@ -164,3 +164,7 @@ window.targetTraining = {
 
 
 };
+
+function timer(ms) {
+    return new Promise(res => setTimeout(res, ms));
+}

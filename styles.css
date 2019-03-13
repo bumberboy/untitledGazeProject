@@ -160,3 +160,24 @@ button {
     width: 140px;
     font-family: 'Source Code Pro', monospace;
 }
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.square,
+.circle {
+    pointer-events: none;
+    position: relative;
+    width: 28px;
+    height: 28px;
+    margin: 2px;
+    background-color: currentColor;
+    font-size: 14px;
+}
+
+.small {
+    width: 18px;
+    height: 18px;
+}

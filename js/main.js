@@ -202,6 +202,8 @@ function setupKeys() {
             useTrainedModel('model');
         } else if (event.key === 'o') {
             useTrainedModel('model2');
+        } else if (event.key === 'n') {
+            gridValidation.startValidation();
         }
     });
 
@@ -212,6 +214,7 @@ function setupKeys() {
     });
 }
 
+var prediction = {x: 0, y: 0};
 
 function moveTarget() {
     if (training.currentModel == null) {
@@ -219,31 +222,31 @@ function moveTarget() {
     }
     tf.tidy(function() {
         const metaInfos = dataset.getMetaInfos();
-        var prediction = null;
+        var _prediction = null;
 
         if (training.useMetaData) {
             const image = dataset.getImage();
 
-            prediction = training.currentModel.predict([image,metaInfos]);
+            _prediction = training.currentModel.predict([image,metaInfos]);
         } else if (training.useTwoEyes) {
             const images = dataset.getImages();
-            prediction = training.currentModel.predict([images[0], images[1], metaInfos]);
+            _prediction = training.currentModel.predict([images[0], images[1], metaInfos]);
 
 
         } else if (training.useTwoEyesAndFace) {
             const images = dataset.getImages();
-            prediction = training.currentModel.predict([images[0], images[1], images[2]]);
+            _prediction = training.currentModel.predict([images[0], images[1], images[2]]);
 
 
         } else if (training.useEyesFaceFacePos) {
             const images = dataset.getAllInputs();
-            prediction = training.currentModel.predict([images[0], images[1], images[2], images[3]]);
+            _prediction = training.currentModel.predict([images[0], images[1], images[2], images[3]]);
 
 
         } else {
             const image = dataset.getImage();
 
-            prediction = training.currentModel.predict(image);
+            _prediction = training.currentModel.predict(image);
         }
 
 
@@ -251,9 +254,12 @@ function moveTarget() {
         const target = $('#target');
         const targetWidth = target.outerWidth();
         const targetHeight = target.outerHeight();
-        console.log(prediction.get(0,0), prediction.get(0,1));
-        const xx = Math.min(((prediction.get(0, 0) + 1) / 2), 1);
-        const yy = Math.min(((prediction.get(0, 1) + 1) / 2), 1);
+
+        prediction.x = _prediction.get(0,0);
+        prediction.y = _prediction.get(0,1);
+
+        const xx = Math.min(((prediction.x + 1) / 2), 1);
+        const yy = Math.min(((prediction.y + 1) / 2), 1);
 
         const x = xx * ($(window).width() - targetWidth);
         const y = yy * ($(window).height() - targetHeight);
@@ -262,7 +268,7 @@ function moveTarget() {
         target.css('left', x + 'px');
         target.css('top', y + 'px');
 
-        heatmap.addData({ x: x, y: y, value: 0.1     })
+        heatmap.addData({ x: x, y: y, value: 0.1  })
     });
 }
 
