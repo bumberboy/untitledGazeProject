@@ -3,7 +3,7 @@ window.targetTraining = {
     y:0,
     trainingTargetTimer: null,
     captureTimer: null,
-    gridIsRunning: false,
+    trainingInProgress: false,
     gridAnim:null,
 
     getTargetPos: function() {
@@ -22,6 +22,7 @@ window.targetTraining = {
 
         } else if (type === 'circle') {
             targetTraining.displayCircularTrainingTarget();
+
         } else if (type === 'grid') {
             targetTraining.displayGridTargetTraining();
 
@@ -29,9 +30,12 @@ window.targetTraining = {
 
 
     },
+    startRecording: function() {
+        targetTraining.captureTimer = setInterval(targetTraining.captureExample,100);
+    },
 
-    stopTargetTraining: function() {
-        clearInterval(targetTraining.trainingTargetTimer);
+    stopRecording: function() {
+        // clearInterval(targetTraining.trainingTargetTimer);
         clearInterval(targetTraining.captureTimer);
     },
 
@@ -126,26 +130,24 @@ window.targetTraining = {
         var w = window.innerWidth - 35;
         var h = window.innerHeight - 35;
         targetTraining.gridAnim = anime({
-            targets: '#ball',
+            targets: '#trainingTarget',
             keyframes: [
-                {translateX: w, duration: 6000},
-                {translateY: h, duration: 6000},
-                {translateX: 0, duration: 6000},
-                {translateY: 200, duration: 5000},
-                {translateX: w - 200, duration: 6000},
-                {translateY: h - 200, duration: 5000},
-                {translateX: 200, duration: 6000},
-                {translateY: 400, duration: 4000},
-                {translateX: w - 400, duration: 5000},
-                {translateY: h - 400, duration: 3000},
-                {translateX: 400, duration: 5000},
-                {translateY: 600, duration: 2000},
+                {translateX: w, duration: 10000},
+                {translateY: h, duration: 8000},
+                {translateX: 0, duration: 10000},
+                {translateY: 200, duration: 8000},
+                {translateX: w - 200, duration: 4000},
+                {translateY: h - 200, duration: 2500},
+                {translateX: 200, duration: 4000},
+                {translateY: 400, duration: 2500},
+                {translateX: w - 400, duration: 2000},
+                {translateY: h - 400, duration: 1000},
+                {translateX: 400, duration: 2000},
+                {translateY: 600, duration: 1000},
             ],
             easing: 'linear',
-            loop: false,
-            begin: function(anim) {
-                targetTraining.captureTimer = setInterval(targetTraining.captureExample,100);
-            },
+            loop: true,
+            direction: 'alternate',
             update: function(anim) {
                 const translation = anim.animatables[0].transforms.list;
                 absoluteX = parseFloat(translation.get("translateX"));

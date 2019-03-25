@@ -44,7 +44,7 @@ function drawExpressions(dimensions, canvas, results, thresh, withBoxes = true) 
 
 
 
-function displayFace(faceBox) {
+function displayFace(faceBox ) {
     const faceCanvas = $('#face').get(0);
     const faceCanvasContext = faceCanvas.getContext('2d');
     const video = $('#inputVideo').get(0);
@@ -56,8 +56,8 @@ function displayMask(faceBox) {
     const faceCanvasContext = maskCanvas.getContext('2d');
     // const video = $('#inputVideo').get(0);
     // faceCanvasContext.drawImage(video, 0, 0, 640, 480,0,0,maskCanvas.width , maskCanvas.height);
-    const xRatio = maskCanvas.width/640;
-    const yRatio = maskCanvas.height/480;
+    const xRatio = maskCanvas.width/480;
+    const yRatio = maskCanvas.height/360;
     faceCanvasContext.clearRect(0 ,0 , maskCanvas.width, maskCanvas.height);
     faceCanvasContext.fillStyle = '#FFFFFF';
     faceCanvasContext.fillRect(0 ,0 , maskCanvas.width, maskCanvas.height);

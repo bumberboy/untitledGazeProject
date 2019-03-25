@@ -73,7 +73,7 @@ window.ui = {
   onFinishTraining: function() {
     // Call this when training is finished.
     this.nTrainings += 1;
-    $('#target').css('opacity', '0.9');
+    $('#gazeTarget').css('opacity', '0.9');
     $('#draw-heatmap').prop('disabled', false);
     $('#reset-model').prop('disabled', false);
     $('#store-model').prop('disabled', false);

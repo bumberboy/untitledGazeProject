@@ -17,7 +17,7 @@ class Grid {
         canvas.height = window.innerHeight;
         this.ctx = canvas.getContext('2d');
         const aspectRatio = window.innerWidth/window.innerHeight;
-        this.verticalBoxCount = 5;
+        this.verticalBoxCount = 3;
         const lineWidth = 1;
         this.ctx.lineWidth = lineWidth;
         this.ctx.strokeStyle = 'rgb(20,20,20)';
@@ -44,11 +44,39 @@ class Grid {
     }
 
     async recordAccuracy() {
+        var odd = true;
         for (var i=0; i<this.verticalBoxCount; i+=1) {
-            for (var j=0; j<this.horizontalBoxCount; j+=1) {
-                await this.gridBoxes[i][j].recordPredictions();
+            if (odd) {
+                for (var j=0; j<this.horizontalBoxCount; j+=1) {
+                    this.setValidationTargetTo(this.gridBoxes[i][j].midPoint);
+                    await this.gridBoxes[i][j].recordPredictions();
+                    console.log(this.gridBoxes[i][j].xAccuracyForMeanCalc, this.gridBoxes[i][j].yAccuracyForMeanCalc);
+
+                }
+                odd = false;
+            } else {
+                for (var j=this.horizontalBoxCount-1; j>=0; j-=1) {
+                    this.setValidationTargetTo(this.gridBoxes[i][j].midPoint);
+                    await this.gridBoxes[i][j].recordPredictions();
+                    console.log(this.gridBoxes[i][j].xAccuracyForMeanCalc, this.gridBoxes[i][j].yAccuracyForMeanCalc);
+
+                }
+                odd = true;
             }
+
         }
+    }
+
+    setValidationTargetTo(midPoint) {
+        console.log(midPoint);
+        const validationTarget = $('#validationTarget');
+        const targetWidth = validationTarget.outerWidth();
+        const targetHeight = validationTarget.outerHeight();
+
+        // Move target there:
+        validationTarget.css('left', midPoint.x - targetWidth/2 + 'px');
+        validationTarget.css('top', midPoint.y - targetHeight/2 + 'px');
+
     }
 
     generateGridBoxes(lineWidth) {
@@ -71,9 +99,12 @@ class GridBox {
         this.frame = frame;
         this.grid = grid;
         this.accuracy = {};
-        const xx = ((this.frame.x + (this.frame.width/2))/window.innerWidth*2)-1;
-        const yy = ((this.frame.y + (this.frame.height/2))/window.innerHeight*2)-1;
-        this.normalizedMidPoint = {x:xx, y:yy}
+        const midX = this.frame.x + this.frame.width/2;
+        const midY = this.frame.y + this.frame.height/2;
+        this.midPoint = {x:midX,y:midY};
+        const xx = (midX/window.innerWidth*2)-1;
+        const yy = (midY/window.innerHeight*2)-1;
+        this.normalizedMidPoint = {x:xx, y:yy};
     }
 
 
@@ -87,7 +118,7 @@ class GridBox {
         this.xAccuracyForMeanCalc = 0.0;
         this.yAccuracyForMeanCalc = 0.0;
         this.countForMeanCalc = 0;
-        const ball = $("#ball");
+        // const ball = $("#trainingTarget");
         // ball.css('left', this.frame.x+this.frame.width/2-12.5 + 'px');
         // ball.css('top', this.frame.y+this.frame.height/2-12.5 + 'px');
         // var animGrid = $("div.grid");
@@ -118,9 +149,24 @@ class GridBox {
 
         this.xAccuracyForMeanCalc = this.xAccuracyForMeanCalc/this.countForMeanCalc;
         this.yAccuracyForMeanCalc = this.yAccuracyForMeanCalc/this.countForMeanCalc;
-        const setColor = 'hsl(' + (Math.max(0,0.5-this.xAccuracyForMeanCalc))*120 +',90%, 90%)';
+        const setColor = 'hsl(' + (Math.max(0,1-this.xAccuracyForMeanCalc))*180 +',100%, 50%)';
         this.setBackgroundColor(setColor);
+        this.displayAccuracy();
 
+    }
+
+    displayAccuracy() {
+        var label = document.createElement("div");
+        label.style.position = 'absolute';
+        label.style.left = this.frame.x + 'px';
+        label.style.top = this.frame.y + 'px';
+        const pixelErrorX = this.xAccuracyForMeanCalc * window.innerWidth;
+        const pixelErrorY = this.yAccuracyForMeanCalc * window.innerHeight;
+        const metricErrorX =pixelErrorX*cmPerPixel;
+        const metricErrorY = pixelErrorY*cmPerPixel;
+        label.innerHTML = Math.sqrt(metricErrorX*metricErrorX +
+                                    metricErrorY*metricErrorY).toFixed(2);
+        document.body.appendChild(label);
     }
 
     recordPrediction() {

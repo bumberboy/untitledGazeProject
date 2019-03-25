@@ -32,7 +32,6 @@ window.dataset = {
     },
 
     getImages: function() {
-        console.log('hello2');
         // Capture the current image in the eyes canvas as a tensor.
         return tf.tidy(function() {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
@@ -53,7 +52,6 @@ window.dataset = {
     },
 
     getAllInputs: function() {
-        console.log('nonono');
 
         return tf.tidy(function() {
             const imageA = tf.fromPixels(document.getElementById('leftEye'));
@@ -201,7 +199,7 @@ window.dataset = {
                 oldMeta.dispose();
 
             } else if (training.useTwoEyesAndFace) {
-                console.log('hello')
+                // console.log('hello')
                 const oldImageA = set.x[0];
                 set.x[0] = tf.keep(oldImageA.concat(img[0], 0));
 
@@ -318,7 +316,7 @@ window.dataset = {
                     const metaInfos = dataset.getMetaInfos();
                     dataset.addExample(img, metaInfos, targetPosition);
                 }
-                console.log("Gaze position captured:",targetPosition);
+                // console.log("Gaze position captured:",targetPosition);
 
             });
         } else {
