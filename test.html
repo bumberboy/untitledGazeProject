@@ -19,7 +19,7 @@
     </div>
     <div style="position: relative" class="margin">
         <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
-        <canvas id="overlay" />
+        <canvas id="landmarksCanvas" />
     </div>
 
     <div class="row side-by-side">
@@ -151,7 +151,7 @@
         const result = await faceapi.detectSingleFace(videoEl, options)
         updateTimeStats(Date.now() - ts)
         if (result) {
-            drawDetections(videoEl, $('#overlay').get(0), [result])
+            drawDetections(videoEl, $('#landmarksCanvas').get(0), [result])
         }
         setTimeout(() => onPlay())
     }

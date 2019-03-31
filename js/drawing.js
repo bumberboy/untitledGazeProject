@@ -66,14 +66,14 @@ function displayMask(faceBox) {
 
 }
 
-// function displayEye(eyes) {
-//     const eyesCanvas = $('#eyes').get(0);
-//     const eyesCanvasContext = eyesCanvas.getContext('2d');
-//     const video = $('#inputVideo').get(0);
-//     eyesCanvasContext.drawImage(video, eyes[0], eyes[1], eyes[2], eyes[3], 0, 0, eyesCanvas.width, eyesCanvas.height);
-// }
+function displayEyes(eyes) {
+    const eyesCanvas = $('#eyes').get(0);
+    const eyesCanvasContext = eyesCanvas.getContext('2d');
+    const video = $('#inputVideo').get(0);
+    eyesCanvasContext.drawImage(video, eyes[0], eyes[1], eyes[2], eyes[3], 0, 0, eyesCanvas.width, eyesCanvas.height);
+}
 
-function displayEyes(leftEye, rightEye) {
+function displayEyesSeparately(leftEye, rightEye) {
     const leftEyeCanvas = $('#leftEye').get(0);
     const leftEyeCanvasContext = leftEyeCanvas.getContext('2d');
     const rightEyeCanvas = $('#rightEye').get(0);
@@ -157,5 +157,75 @@ function displayEyesRotated(rotationAngle, eyesRect) {
 
     eyesCanvasContext.rotate(rotationAngle*Math.PI/180)
     eyesCanvasContext.translate(-eyesCanvas.height/2,-eyesCanvas.height/2);
+
+}
+
+function angleBetweenTwoPoints(p1,p2) {
+    if (p1.x > p2.x) {
+        var p3 = p1;
+        p1 = p2;
+        p2 = p3;
+    }
+    return Math.atan((p2.y-p1.y)/(p2.x-p1.x)) * 180 / Math.PI;
+}
+
+
+function getFaceRotationAngle(landmarks) {
+    const jawOutline = landmarks.getJawOutline();
+    const p1=jawOutline[0];
+    const p2=jawOutline[16];
+    return angleBetweenTwoPoints(p1,p2);
+
+}
+
+function getEyeRotation(landmarks) {
+    const leftEye = landmarks.getLeftEye();
+
+    return  angleBetweenTwoPoints(leftEye[0],leftEye[3]);
+}
+
+function getEyesRect(landmarks) {
+    const leftEye = landmarks.getLeftEye();
+    const rightEye = landmarks.getRightEye();
+    const minX = Math.min(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x,
+        rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) - 10;
+    const maxX = Math.max(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x,
+        rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) + 10;
+    const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y,
+        rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) - 3;
+    const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y,
+        rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) + 3;
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+    return [minX, minY, width, height * 1.25];
+
+}
+
+
+function getLeftEyeRect(landmarks) {
+    var leftEye = landmarks.getLeftEye();
+
+    const minX = Math.min(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x) - 10;
+    const maxX = Math.max(leftEye[0].x, leftEye[1].x, leftEye[2].x, leftEye[3].x, leftEye[4].x, leftEye[5].x) + 10;
+    const minY = Math.min(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) - 4;
+    const maxY = Math.max(leftEye[0].y, leftEye[1].y, leftEye[2].y, leftEye[3].y, leftEye[4].y, leftEye[5].y) + 4;
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+    return [minX, minY, width, height * 1.25];
+
+}
+
+function getRightEyeRect(landmarks) {
+    var rightEye = landmarks.getRightEye();
+
+    const minX = Math.min(rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) - 10;
+    const maxX = Math.max(rightEye[0].x, rightEye[1].x, rightEye[2].x, rightEye[3].x, rightEye[4].x, rightEye[5].x) + 10;
+    const minY = Math.min(rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) - 4
+    const maxY = Math.max(rightEye[0].y, rightEye[1].y, rightEye[2].y, rightEye[3].y, rightEye[4].y, rightEye[5].y) + 4;
+    const width = maxX - minX;
+    const height = maxY - minY;
+    return [minX, minY, width, height * 1.25];
 
 }

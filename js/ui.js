@@ -11,31 +11,31 @@ window.ui = {
 
   showInfo: function(text, dontFlash) {
     // Show info and beep / flash.
-    this.setContent('info', text);
-    if (!dontFlash) {
-      $('#info').addClass('flash');
-      new Audio('hint.mp3').play();
-      setTimeout(function() {
-        $('#info').removeClass('flash');
-      }, 1000);
-    }
+    // this.setContent('info', text);
+    // if (!dontFlash) {
+    //   $('#info').addClass('flash');
+    //   new Audio('hint.mp3').play();
+    //   setTimeout(function() {
+    //     $('#info').removeClass('flash');
+    //   }, 1000);
+    // }
   },
 
   onWebcamEnabled: function() {
-    this.state = 'finding face';
-    this.showInfo("Thanks! Now let's find your face! 🤨", true);
+    // this.state = 'finding face';
+    // this.showInfo("Thanks! Now let's find your face! 🤨", true);
   },
 
   onFoundFace: function() {
-    if (this.state == 'finding face') {
-      this.state = 'collecting';
-      this.readyToCollect = true;
-      this.showInfo(
-        "<h3>Let's start! 🙂</h3>" +
-          'Collect data points by moving your mouse over the screen, following the cursor with your eyes and hitting the space key repeatedly 👀',
-        true,
-      );
-    }
+    // if (this.state == 'finding face') {
+    //   this.state = 'collecting';
+    //   this.readyToCollect = true;
+    //   this.showInfo(
+    //     "<h3>Let's start! 🙂</h3>" +
+    //       'Collect data points by moving your mouse over the screen, following the cursor with your eyes and hitting the space key repeatedly 👀',
+    //     true,
+    //   );
+    // }
   },
 
   onAddExample: function(nTrain, nVal) {
@@ -44,7 +44,9 @@ window.ui = {
     this.setContent('n-train', nTrain);
     this.setContent('n-val', nVal);
     if (nTrain >= 2) {
-      $('#start-training').prop('disabled', false);
+      $('#start-training1').prop('disabled', false);
+      $('#start-training2').prop('disabled', false);
+
     }
     if (this.state == 'collecting' && this.nExamples == 5) {
       this.showInfo(
@@ -70,41 +72,41 @@ window.ui = {
     }
   },
 
-  onFinishTraining: function() {
+  onFinishTraining: function(id) {
     // Call this when training is finished.
     this.nTrainings += 1;
     $('#gazeTarget').css('opacity', '0.9');
     $('#draw-heatmap').prop('disabled', false);
-    $('#reset-model').prop('disabled', false);
-    $('#store-model').prop('disabled', false);
-
-    if (this.nTrainings == 1) {
-      this.state = 'trained';
-      this.showInfo(
-        '<h3>Awesome! 😍</h3>' +
-          'The green target should start following your eyes around.<br>' +
-          "I guess it's still very bad... 😅<br>" +
-          "Let's collect more training data! Keep following the mouse cursor and hitting space.",
-      );
-    } else if (this.nTrainings == 2) {
-      this.state = 'trained_twice';
-      this.showInfo(
-        '<h3>Getting better! 🚀</h3>' +
-          'Keep collecting and retraining!<br>' +
-          'You can also draw a heatmap that shows you where your ' +
-          'model has its strong and weak points.',
-      );
-    } else if (this.nTrainings == 3) {
-      this.state = 'trained_thrice';
-      this.showInfo(
-        'If your model is overfitting, remember you can reset it anytime 👻',
-      );
-    } else if (this.nTrainings == 4) {
-      this.state = 'trained_thrice';
-      this.showInfo(
-        '<h3>Have fun!</h3>' +
-          'Check out more of my stuff at <a href="https://cpury.github.io/" target="_blank">cpury.github.io</a> 😄',
-      );
-    }
+    $('#reset-model'+id).prop('disabled', false);
+    $('#store-model'+id).prop('disabled', false);
+    //
+    // if (this.nTrainings == 1) {
+    //   this.state = 'trained';
+    //   this.showInfo(
+    //     '<h3>Awesome! 😍</h3>' +
+    //       'The green target should start following your eyes around.<br>' +
+    //       "I guess it's still very bad... 😅<br>" +
+    //       "Let's collect more training data! Keep following the mouse cursor and hitting space.",
+    //   );
+    // } else if (this.nTrainings == 2) {
+    //   this.state = 'trained_twice';
+    //   this.showInfo(
+    //     '<h3>Getting better! 🚀</h3>' +
+    //       'Keep collecting and retraining!<br>' +
+    //       'You can also draw a heatmap that shows you where your ' +
+    //       'model has its strong and weak points.',
+    //   );
+    // } else if (this.nTrainings == 3) {
+    //   this.state = 'trained_thrice';
+    //   this.showInfo(
+    //     'If your model is overfitting, remember you can reset it anytime 👻',
+    //   );
+    // } else if (this.nTrainings == 4) {
+    //   this.state = 'trained_thrice';
+    //   this.showInfo(
+    //     '<h3>Have fun!</h3>' +
+    //       'Check out more of my stuff at <a href="https://cpury.github.io/" target="_blank">cpury.github.io</a> 😄',
+    //   );
+    // }
   },
 };

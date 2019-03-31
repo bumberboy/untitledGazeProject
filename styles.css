@@ -7,8 +7,11 @@
     display: inline-flex !important;
 }
 
+
+
 html {
     background-color: aliceblue;
+    font-family: "Gill Sans", sans-serif;
 }
 
 #heatmapContainerWrapper {
@@ -17,7 +20,7 @@ html {
     position:absolute;
     top: 0px;
     left: 0px;
-    display:none;
+    visibility: hidden;
 }
 #heatmapContainer { width:100%; height:100%;}
 
@@ -30,6 +33,10 @@ html {
     top:0;
     left:0;
 
+}
+
+.grid-validation-label {
+    font-size: 80px;
 }
 
 #validationTarget {
@@ -76,7 +83,7 @@ html {
     flex-wrap: wrap;
 }
 
-#gazeTarget {
+[id^='gazeTarget'] {
     background-color: lightgreen;
     position: absolute;
     border-radius: 50%;
@@ -123,6 +130,10 @@ html {
     padding: 0 10px !important;
 }
 
+#inputVideo {
+    visibility: hidden;
+}
+
 .pad-sides-sm {
     padding: 0 8px !important;
 }
@@ -135,10 +146,15 @@ html {
     margin-bottom: 10px;
 }
 
-#overlay, .overlay {
+#landmarksCanvas, .overlay {
     position: absolute;
     top: 0;
     left: 0;
+    visibility: hidden;
+}
+
+#face, #leftEye, #rightEye, #mask, #eyes {
+    visibility: hidden;
 }
 
 #eyes, #leftEye {
@@ -155,14 +171,13 @@ html {
     top: 0;
     right: 0;
     width: 400px;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     padding: 0.5em;
 }
 
 #training table {
     width: 100%;
     font-size: 16pt;
-    font-family: 'Source Code Pro', monospace;
 }
 
 #training table td:nth-child(2) {
@@ -189,7 +204,6 @@ button {
     padding: 0.125em 0em;
     margin: 0.1em;
     width: 140px;
-    font-family: 'Source Code Pro', monospace;
 }
 
 .grid {
@@ -211,4 +225,39 @@ button {
 .small {
     width: 18px;
     height: 18px;
+}
+
+/*#info {*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+    /*font-size: 24pt;*/
+    /*background-color: lightgreen;*/
+    /*padding: 1em;*/
+    /*border-radius: 10px;*/
+    /*max-width: 500px;*/
+    /*transition: all 1s;*/
+    /*-webkit-animation-duration: 1s;*/
+    /*animation-duration: 1s;*/
+    /*-webkit-animation-fill-mode: both;*/
+    /*animation-fill-mode: both;*/
+/*}*/
+
+/*#info h3 {*/
+    /*margin: 0.2em 0;*/
+/*}*/
+
+/*#info.flash {*/
+    /*-webkit-animation-name: flash;*/
+    /*animation-name: flash;*/
+/*}*/
+
+#data-uploader, #model-uploader, #model-uploader2 {
+    display: none;
+}
+
+.model-row {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

@@ -1,9 +1,11 @@
 window.gridValidation = {
+    testRan: 0,
     startValidation: function() {
         grid = new Grid();
         grid.setup();
         // grid.gridBoxes[4][7].setBackgroundColor('red');
         grid.recordAccuracy();
+        gridValidation.testRan += 1;
     }
 
 };
@@ -17,7 +19,7 @@ class Grid {
         canvas.height = window.innerHeight;
         this.ctx = canvas.getContext('2d');
         const aspectRatio = window.innerWidth/window.innerHeight;
-        this.verticalBoxCount = 3;
+        this.verticalBoxCount = 7;
         const lineWidth = 1;
         this.ctx.lineWidth = lineWidth;
         this.ctx.strokeStyle = 'rgb(20,20,20)';
@@ -73,6 +75,7 @@ class Grid {
         const targetWidth = validationTarget.outerWidth();
         const targetHeight = validationTarget.outerHeight();
 
+
         // Move target there:
         validationTarget.css('left', midPoint.x - targetWidth/2 + 'px');
         validationTarget.css('top', midPoint.y - targetHeight/2 + 'px');
@@ -97,6 +100,7 @@ class Grid {
 class GridBox {
     constructor(grid, frame) {
         this.frame = frame;
+        this.testRan = 0;
         this.grid = grid;
         this.accuracy = {};
         const midX = this.frame.x + this.frame.width/2;
@@ -142,9 +146,11 @@ class GridBox {
         //     ],
         //     delay: anime.stagger(100, {grid: [7, 7], from: 'center'})
         // });
-        for (var i = 0; i < 60; i++) {
+
+        await timer(1000);
+        for (var i = 0; i < 50; i++) {
             this.recordPrediction();
-            await timer(16.6);
+            await timer(20);
         }
 
         this.xAccuracyForMeanCalc = this.xAccuracyForMeanCalc/this.countForMeanCalc;
@@ -156,22 +162,35 @@ class GridBox {
     }
 
     displayAccuracy() {
+        console.log(this.testRan);
         var label = document.createElement("div");
+        label.className = 'grid-validation-label';
         label.style.position = 'absolute';
         label.style.left = this.frame.x + 'px';
-        label.style.top = this.frame.y + 'px';
+        label.style.top = (this.frame.y + gridValidation.testRan*80) + 'px';
         const pixelErrorX = this.xAccuracyForMeanCalc * window.innerWidth;
         const pixelErrorY = this.yAccuracyForMeanCalc * window.innerHeight;
         const metricErrorX =pixelErrorX*cmPerPixel;
         const metricErrorY = pixelErrorY*cmPerPixel;
-        label.innerHTML = Math.sqrt(metricErrorX*metricErrorX +
+        // const labelText = Math.sqrt(metricErrorX*metricErrorX +
+        //                             metricErrorY*metricErrorY).toFixed(2);
+        const labelText = Math.sqrt(metricErrorX*metricErrorX +
                                     metricErrorY*metricErrorY).toFixed(2);
+        label.innerHTML = labelText;
         document.body.appendChild(label);
     }
 
     recordPrediction() {
-        const xAccuracy = prediction.x - this.normalizedMidPoint.x;
-        const yAccuracy = prediction.y - this.normalizedMidPoint.y;
+
+        // prediction.x = this.normalizedMidPoint.x + 0.1;
+        // prediction.y = this.normalizedMidPoint.y + 0.1;
+        console.log(predictions["1"].x, this.normalizedMidPoint.x);
+        const p_x = (predictions["1"].x + 1)/2;
+        const mp_x = (this.normalizedMidPoint.x + 1)/2;
+        const p_y = (predictions["1"].y + 1)/2;
+        const mp_y = (this.normalizedMidPoint.y + 1)/2;
+        const xAccuracy = p_x - mp_x;
+        const yAccuracy = p_y - mp_y;
         this.xAccuracyForMeanCalc += Math.abs(xAccuracy);
         this.yAccuracyForMeanCalc += Math.abs(yAccuracy);
         this.countForMeanCalc += 1;
