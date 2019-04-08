@@ -1,7 +1,7 @@
 let forwardTimes = [];
 let cmPerPixel = 0.023347; // for 27inch iMAC;
 var model1 = new Model1('1');
-var model2 = new Model1('2');
+// var model2 = new Model1('2');
 
 // var eyesRect = null;
 function updateTimeStats(timeInMs) {
@@ -123,9 +123,9 @@ function moveTargets() {
     if (model1.isTrained) {
         model1.moveTarget();
     }
-    if (model2.isTrained) {
-        model2.moveTarget();
-    }
+    // if (model2.isTrained) {
+    //     model2.moveTarget();
+    // }
 
 }
 
