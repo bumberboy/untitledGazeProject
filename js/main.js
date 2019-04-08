@@ -129,17 +129,17 @@ function moveTargets() {
 
 }
 
-// var heatmap = null;
+var heatmap = null;
 
-// function drawHeatmap() {
-//     heatmap = h337.create({
-//         container: document.getElementById('heatmapContainer'),
-//         maxOpacity: .6,
-//         radius: 40,
-//         blur: .950,
-//         // backgroundColor with alpha so you can see through it
-//     });
-// }
+function drawHeatmap() {
+    heatmap = h337.create({
+        container: document.getElementById('heatmapContainer'),
+        maxOpacity: .6,
+        radius: 40,
+        blur: .950,
+        // backgroundColor with alpha so you can see through it
+    });
+}
 
 $(document).ready(function() {
 
@@ -149,7 +149,7 @@ $(document).ready(function() {
     // targetTraining.runTargetTraining();
     setInterval(moveTargets, 100);
 
-    // drawHeatmap();
+    drawHeatmap();
 
 
 });

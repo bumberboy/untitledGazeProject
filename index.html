@@ -6,44 +6,57 @@
     <link rel="stylesheet" href="styles.css">
 
 
-
-
-
-
 </head>
 <body>
 
 <canvas id="grid"></canvas>
 
 
-
 <div style="position: relative" class="margin">
     <video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
-    <canvas id="landmarksCanvas" ></canvas>
+    <canvas id="landmarksCanvas"></canvas>
     <canvas id="eyes" width="60" height="30"></canvas>
     <canvas id="leftEye" width="30" height="30"></canvas>
     <canvas id="rightEye" width="30" height="30"></canvas>
-    <!--<canvas id="eyesRotated" width="60" height="60"></canvas>-->
-    <canvas id = "face" width="40" height="40"></canvas>
-    <canvas id = "mask" width="15" height="15"></canvas>
+    <canvas id="face" width="40" height="40"></canvas>
+    <canvas id="mask" width="15" height="15"></canvas>
 
 </div>
 
-<!--<div id="heatmapContainerWrapper"><div id="heatmapContainer"></div></div>-->
-
+<div id="heatmapContainerWrapper">
+    <div id="heatmapContainer"></div>
+</div>
 
 
 <div id="training">
     <table>
-        <tr><td>fps</td><td id="fps">0</td></tr>
-        <tr><td>Training examples</td><td data-content="n-train">0</td></tr>
-        <tr><td>Validation examples</td><td data-content="n-val">0</td></tr>
+        <tr>
+            <td>fps</td>
+            <td id="fps">0</td>
+        </tr>
+        <tr>
+            <td>Training examples</td>
+            <td data-content="n-train">0</td>
+        </tr>
+        <tr>
+            <td>Validation examples</td>
+            <td data-content="n-val">0</td>
+        </tr>
     </table>
     <div class="model-row">
         <table>
-            <tr><td>Epochs trained</td><td data-content="n-epochs1">0</td></tr>
-            <tr><td>Training loss</td><td data-content="train-loss1">?</td></tr>
-            <tr><td>Validation loss</td><td data-content="val-loss1">?</td></tr>
+            <tr>
+                <td>Epochs trained</td>
+                <td data-content="n-epochs1">0</td>
+            </tr>
+            <tr>
+                <td>Training loss</td>
+                <td data-content="train-loss1">?</td>
+            </tr>
+            <tr>
+                <td>Validation loss</td>
+                <td data-content="val-loss1">?</td>
+            </tr>
         </table>
 
         <div class="buttonwrap">
@@ -62,8 +75,6 @@
                     <option value="model-C-F40">ESF - F40</option>
 
 
-
-
                 </select>
                 <div></div>
                 <button id="start-training1" disabled>Start Training</button>
@@ -76,36 +87,7 @@
             </div>
         </div>
     </div>
-    <!--<div class="model-row">-->
-        <!--<table>-->
-            <!--<tr><td>Epochs trained</td><td data-content="n-epochs2">0</td></tr>-->
-            <!--<tr><td>Training loss</td><td data-content="train-loss2">?</td></tr>-->
-            <!--<tr><td>Validation loss</td><td data-content="val-loss2">?</td></tr>-->
-        <!--</table>-->
-        <!--<div class="buttonwrap">-->
 
-            <!--<div class="buttonrow">-->
-
-                <!--<select id="model-select2">-->
-                    <!--<option value="select">select</option>-->
-                    <!--<option value="model-A">Eyes Only</option>-->
-                    <!--<option value="model-B">Eyes with Metadata</option>-->
-                    <!--<option value="model-C">Eyes and Face Separated</option>-->
-                    <!--<option value="model-C">Eyes and Face Separated 2-layer</option>-->
-
-                <!--</select>-->
-                <!--<div></div>-->
-                <!--<button id="start-training2" disabled>Start Training</button>-->
-                <!--<button id="reset-model2" disabled>Reset Model</button>-->
-
-            <!--</div>-->
-            <!--<div class="buttonrow">-->
-                <!--<button id="store-model2" disabled>Save Model</button>-->
-                <!--<button id="load-model2">Load Model</button>-->
-                <!--<input type="file" id="model-uploader2" multiple>-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="buttonwrap">
 
         <div class="buttonrow">
@@ -119,20 +101,17 @@
         </div>
 
         <div class="buttonrow">
-            <!--<button id="toggle-target-heatmap">Toggle Heatmap</button>-->
             <button id="toggle-camview">Toggle Cam View</button>
             <button id="toggle-landmark-drawing">Toggle Landmarks</button>
 
         </div>
-        <!--<div class="buttonrow">-->
-        <!--</div>-->
+
     </div>
 
     <div id="chart" height="400"></div>
 </div>
 
 <div id="gazeTarget1"></div>
-<!--<div id="gazeTarget2"></div>-->
 
 <div id="trainingTarget"></div>
 <div id="validationTarget"></div>
@@ -146,10 +125,8 @@
 <script src="js/faceDetectionControls.js"></script>
 <script src="js/drawing.js"></script>
 <script src="js/datasets.js"></script>
-
 <script src="js/model.js"></script>
 <script src="js/setupKeys.js"></script>
-
 <script src="js/main.js"></script>
 <script src="js/mouse.js"></script>
 <script src="js/ui.js"></script>
@@ -158,10 +135,6 @@
 <script src="js/specs.js"></script>
 <script src="js/apexcharts.js"></script>
 <script src="js/lossPlot.js"></script>
-
-
-
-
 <script src="js/heatmap.js"></script>
 
 

@@ -1,5 +1,4 @@
 window.dataset = {
-    counter:1500,
     eyeCanvasWidth: 30,
     eyeCanvasHeight: 30,
     eyesCanvasWidth: 60,
