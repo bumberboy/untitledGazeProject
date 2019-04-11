@@ -127,10 +127,10 @@ function setupKeys() {
     $('#toggle-target-heatmap').click(function() {
         console.log('toggle heatmap');
         if (targetHeatMapIsHidden) {
-            $('#heatMapContainerWrapper').css("display", "unset");
+            $('#heatmapContainerWrapper').css("visibility", "unset");
             targetHeatMapIsHidden = false;
         } else {
-            $('#heatMapContainerWrapper').css("display", "hidden");
+            $('#heatmapContainerWrapper').css("visibility", "hidden");
             targetHeatMapIsHidden = true;
 
         }

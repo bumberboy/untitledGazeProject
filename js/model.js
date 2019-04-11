@@ -181,6 +181,7 @@ function Model1(id) {
         // Move target there:
         this.target.css('left', x + 'px');
         this.target.css('top', y + 'px');
+        heatmap.addData({x:x,y:y,value:100})
     }
 
     this.getPrediction = function() {
