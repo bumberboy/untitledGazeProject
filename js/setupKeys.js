@@ -41,7 +41,7 @@ function setupKeys() {
             // } else if (event.key === 'o') {
             //     useTrainedModel('model2');
         } else if (event.key === 'n') {
-            gridValidation.startValidation();
+            gridValidation.toggleGridValidation();
 
         } else if (event.key === 'q') {
             if (panelIsHidden) {
