@@ -1,5 +1,7 @@
 let forwardTimes = [];
-let cmPerPixel = 0.023347; // for 27inch iMAC;
+// let cmPerPixel = 0.023347; // for 27inch iMAC;
+let cmPerPixel = 0.01966; // for 15inch MBP;
+
 var model1 = new Model1('1');
 // var model2 = new Model1('2');
 

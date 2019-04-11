@@ -1,5 +1,25 @@
 window.gridValidation = {
     testRan: 0,
+    running:false,
+    isPaused: false,
+
+    toggleGridValidation: function() {
+        if (gridValidation.running && gridValidation.isPaused) {
+            gridValidation.isPaused = false;
+
+        } else if (gridValidation.running && !gridValidation.isPaused) {
+            gridValidation.isPaused = true;
+
+        } else {
+            gridValidation.running = true;
+            gridValidation.startValidation();
+        }
+    },
+
+    clearGridValidation: function() {
+
+    },
+
     startValidation: function() {
         grid = new Grid();
         grid.setup();
@@ -122,35 +142,14 @@ class GridBox {
         this.xAccuracyForMeanCalc = 0.0;
         this.yAccuracyForMeanCalc = 0.0;
         this.countForMeanCalc = 0;
-        // const ball = $("#trainingTarget");
-        // ball.css('left', this.frame.x+this.frame.width/2-12.5 + 'px');
-        // ball.css('top', this.frame.y+this.frame.height/2-12.5 + 'px');
-        // var animGrid = $("div.grid");
-        // var animGridContainer = $(".staggering-grid-demo");
-        //
-        // animGridContainer.css("position", "absolute");
-        // animGridContainer.css("left", 1 + "px");
-        // animGridContainer.css("top", 1 + "px");
-        // animGridContainer.css("height", 170 + "px");
-        // animGridContainer.css("width", 170 + "px");
-        //
-        //
-        // var htmlString = "";
-        // for (var i=0; i<50; i++) {htmlString += "<div class=\"small square el\"></div>"}
-        // animGrid.html(htmlString);
-        // anime({
-        //     targets: '.staggering-grid-demo .el',
-        //     scale: [
-        //         {value: .1, easing: 'easeOutSine', duration: 500},
-        //         {value: 1, easing: 'easeInOutQuad', duration: 500}
-        //     ],
-        //     delay: anime.stagger(100, {grid: [7, 7], from: 'center'})
-        // });
 
         await timer(1000);
-        for (var i = 0; i < 50; i++) {
+        for (var i = 0; i < 20; i++) {
+            while (gridValidation.isPaused) {
+                await timer(1000)
+            }
             this.recordPrediction();
-            await timer(20);
+            await timer(60);
         }
 
         this.xAccuracyForMeanCalc = this.xAccuracyForMeanCalc/this.countForMeanCalc;
