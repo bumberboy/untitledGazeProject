@@ -39,7 +39,7 @@ class Grid {
         canvas.height = window.innerHeight;
         this.ctx = canvas.getContext('2d');
         const aspectRatio = window.innerWidth/window.innerHeight;
-        this.verticalBoxCount = 7;
+        this.verticalBoxCount = 5;
         const lineWidth = 1;
         this.ctx.lineWidth = lineWidth;
         this.ctx.strokeStyle = 'rgb(20,20,20)';
@@ -72,7 +72,7 @@ class Grid {
                 for (var j=0; j<this.horizontalBoxCount; j+=1) {
                     this.setValidationTargetTo(this.gridBoxes[i][j].midPoint);
                     await this.gridBoxes[i][j].recordPredictions();
-                    console.log(this.gridBoxes[i][j].xAccuracyForMeanCalc, this.gridBoxes[i][j].yAccuracyForMeanCalc);
+                    // console.log(this.gridBoxes[i][j].xAccuracyForMeanCalc, this.gridBoxes[i][j].yAccuracyForMeanCalc);
 
                 }
                 odd = false;
@@ -80,7 +80,7 @@ class Grid {
                 for (var j=this.horizontalBoxCount-1; j>=0; j-=1) {
                     this.setValidationTargetTo(this.gridBoxes[i][j].midPoint);
                     await this.gridBoxes[i][j].recordPredictions();
-                    console.log(this.gridBoxes[i][j].xAccuracyForMeanCalc, this.gridBoxes[i][j].yAccuracyForMeanCalc);
+                    // console.log(this.gridBoxes[i][j].xAccuracyForMeanCalc, this.gridBoxes[i][j].yAccuracyForMeanCalc);
 
                 }
                 odd = true;
@@ -166,7 +166,7 @@ class GridBox {
         label.className = 'grid-validation-label';
         label.style.position = 'absolute';
         label.style.left = this.frame.x + 'px';
-        label.style.top = (this.frame.y + gridValidation.testRan*80) + 'px';
+        label.style.top = (this.frame.y + gridValidation.testRan*40) + 'px';
         const pixelErrorX = this.xAccuracyForMeanCalc * window.innerWidth;
         const pixelErrorY = this.yAccuracyForMeanCalc * window.innerHeight;
         const metricErrorX =pixelErrorX*cmPerPixel;

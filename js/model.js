@@ -17,7 +17,7 @@ function Model1(id) {
 
         console.log("MY ID IS:", this.id);
 
-        const epochs = 20;
+        const epochs = 10;
 
         let batchSize = Math.floor(dataset.train.n * 0.1);
         if (batchSize < 4) {batchSize = 4;} else if (batchSize > 64) {batchSize = 64;}

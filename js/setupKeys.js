@@ -123,6 +123,11 @@ function setupKeys() {
         }
     });
 
+    $('#toggle-grid-validation').click(function() {
+        console.log('toggle grid validation');
+        gridValidation.toggleGridValidation();
+
+    });
 
     $('#toggle-target-heatmap').click(function() {
         console.log('toggle heatmap');
@@ -158,6 +163,19 @@ function setupKeys() {
 
         reader.readAsBinaryString(file);
     });
+
+    // $('#bg-uploader').change(function(e) {
+    //     const file = e.target.files[0];
+    //     const reader = new FileReader();
+    //
+    //     reader.onload = function() {
+    //         const data = reader.readAsDataURL(file);
+    //         const json = JSON.parse(data);
+    //         dataset.fromJSON(json);
+    //     };
+    //
+    //     reader.readAsBinaryString(file);
+    // });
 
 
 }
