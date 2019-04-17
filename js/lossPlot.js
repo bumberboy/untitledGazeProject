@@ -16,9 +16,9 @@ window.lossPlot = {
     plotChart: function() {
         // if (lossPlot.chart == null) {
             const options = {
-                chart: {height: 350, type: 'line', zoom: {enabled: false}},
+                chart: {height: 400, type: 'line', zoom: {enabled: false}},
                 dataLabels: {enabled: false},
-                stroke: {curve: 'straight'},
+                stroke: {curve: 'straight', width:1},
                 series: [{
                     name: "Val Loss",
                     data: lossPlot.validationLoss

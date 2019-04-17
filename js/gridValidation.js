@@ -143,13 +143,13 @@ class GridBox {
         this.yAccuracyForMeanCalc = 0.0;
         this.countForMeanCalc = 0;
 
-        await timer(1000);
-        for (var i = 0; i < 20; i++) {
+        await timer(2000);
+        for (var i = 0; i < 30; i++) {
             while (gridValidation.isPaused) {
                 await timer(1000)
             }
             this.recordPrediction();
-            await timer(60);
+            await timer(100);
         }
 
         this.xAccuracyForMeanCalc = this.xAccuracyForMeanCalc/this.countForMeanCalc;

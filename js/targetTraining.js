@@ -31,7 +31,7 @@ window.targetTraining = {
 
     },
     startRecording: function() {
-        targetTraining.captureTimer = setInterval(targetTraining.captureExample,100);
+        targetTraining.captureTimer = setInterval(targetTraining.captureExample,300);
     },
 
     stopRecording: function() {

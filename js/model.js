@@ -168,6 +168,9 @@ function Model1(id) {
     this.target = $('#gazeTarget'+this.id);
     this.targetWidth = this.target.outerWidth();
     this.targetHeight = this.target.outerHeight();
+    this.ema = {x:[], y:[]};
+    this.emaSize = 4;
+
     this.moveTarget = function() {
         // Convert normalized position back to screen position:
 
@@ -175,14 +178,31 @@ function Model1(id) {
         const xx = Math.min(((predictions[this.id].x + 1) / 2), 1);
         const yy = Math.min(((predictions[this.id].y + 1) / 2), 1);
 
-        const x = xx * ($(window).width() - this.targetWidth);
-        const y = yy * ($(window).height() - this.targetHeight);
+        var x = xx * ($(window).width() - this.targetWidth);
+        var y = yy * ($(window).height() - this.targetHeight);
+
+
+
+        if (this.ema.x.length === this.emaSize) {
+            this.ema.x.shift();
+            this.ema.x.push(x);
+            this.ema.y.shift();
+            this.ema.y.push(y);
+        } else {
+            this.ema.x.push(x);
+            this.ema.y.push(y);
+        }
+
+        x = arrAvg(this.ema.x);
+        y = arrAvg(this.ema.y);
 
         // Move target there:
         this.target.css('left', x + 'px');
         this.target.css('top', y + 'px');
+
+
         heatmap.addData({x:x,y:y,value:100})
-    }
+    };
 
     this.getPrediction = function() {
         m = this;
@@ -522,3 +542,5 @@ ModelFactory = {
 
     }
 };
+
+const arrAvg = arr => arr.reduce((a,b) => a + b, 0) / arr.length;
